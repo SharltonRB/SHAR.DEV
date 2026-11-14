@@ -40,6 +40,8 @@ Fuera de esta funcionalidad: Tailwind, Preact, Better Auth, Vercel Blob, Resend,
 - La documentación de Drizzle dice que el modo HTTP sirve para consultas sueltas y transacciones **no interactivas** (`batch`), y que el modo WebSocket es el necesario para las interactivas.
 - El código del módulo usa `db.transaction(...)`, que funciona igual con el driver de Neon y con el de PGlite, y así los tests ejercitan el mismo código que producción.
 - En Node 24 `WebSocket` es global. Si al implementar el driver lo pide, se configura `neonConfig.webSocketConstructor` con el paquete `ws`; se comprueba en la primera tarea de base de datos.
+  - Comprobado en T007 (2026-11-13): no hace falta `ws`. El README del driver solo lo pide en Node ≤ 21, y con Node 24.18 el `Pool` abre el WebSocket global (contra un puerto cerrado falla con un `ErrorEvent` de red, no por falta de constructor).
+  - Pendiente para la funcionalidad 7: en Vercel Fluid la instancia se suspende entre peticiones con el `Pool` de `getDb()` abierto. Al usarlo desde una función, valorar `attachDatabasePool` de `@vercel/functions` o un `idleTimeoutMillis` corto. No se ha probado en Vercel.
 
 **Alternatives considered**:
 

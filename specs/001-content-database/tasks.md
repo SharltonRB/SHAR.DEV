@@ -72,11 +72,12 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - `contact.whatsapp` con `CHECK` `^\+\d{8,15}$`; `content_state.updated_at timestamptz NOT NULL DEFAULT now()`.
   - Crear `drizzle.config.ts` (`dialect: "postgresql"`, `schema: "./src/content/schema.ts"`, `out: "./drizzle"`, `dbCredentials.url` desde `process.env.DATABASE_URL`, y carga de `.env.local` con `process.loadEnvFile` solo si el archivo existe). Ejecutar `pnpm db:generate` y subir la migración inicial de `drizzle/`.
   - En `.github/workflows/ci.yml`, quitar la línea `if: hashFiles('drizzle.config.ts') != ''` del paso «Check schema drift» y su comentario «Skipped until…», para que el control no se apague en silencio si la config cambia de nombre.
-- [ ] T007 Crear la conexión y la base de tests:
+- [X] T007 Crear la conexión y la base de tests:
   - En `src/content/db.ts`: exportar el tipo `Database` (el `PgDatabase` común a los drivers de Neon y PGlite, tipado con el esquema), `createDb(url)` con `Pool` de `@neondatabase/serverless` y `drizzle-orm/neon-serverless`, y `getDb()`, perezoso, con un único `Pool` por proceso, que lanza un error claro si falta `DATABASE_URL`.
   - Comprobar si el driver necesita `neonConfig.webSocketConstructor` en Node 24. Si hace falta, añadir `ws` con versión exacta de al menos dos semanas y anotarlo en research.md §2.
   - Crear `tests/helpers/test-db.ts` con `createTestDb()`: `new PGlite()` en memoria, `drizzle` de `drizzle-orm/pglite` con el esquema y `migrate` de `drizzle-orm/pglite/migrator` sobre `./drizzle`.
   - Exportar `Database`, `createDb` y `getDb` en `src/content/index.ts`. Sin tests propios: FR-024 se prueba en T010 por la interfaz pública.
+  - Nota: no hace falta `ws` (ver research.md §2). `createDb` devuelve `NeonDatabase & { $client: Pool }` para que T011 pueda usar el migrador de Neon y `$client.end()`; `createTestDb()` devuelve `Database & { $client: PGlite }` y resuelve `drizzle/` desde `import.meta.url`, sin depender del cwd (T011 debería hacer lo mismo). El `Pool` tiene un listener de `error` para que un cliente ocioso caído no tumbe el proceso.
 - [ ] T008 [P] Crear los errores y las piezas de validación:
   - En `src/content/errors.ts`: `ContentValidationError` (`issues: { field, code, message }[]`) y `ContentNotFoundError` (`entity`, `id`), con el tipo `IssueCode` exacto de `contracts/content-module.md`.
   - En `src/content/validation.ts`, esquemas reutilizables Zod 4:
