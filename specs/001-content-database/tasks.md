@@ -91,13 +91,14 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - También en `validation.ts`: todos los objetos de entrada con `z.strictObject` (campo desconocido → `unknown_field`) y la función `parseInput(schema, input)`, que convierte todos los problemas de Zod a `{ field: "ruta.con.puntos", code, message }` y lanza `ContentValidationError`.
   - Exportar los errores en `src/content/index.ts`. Sin tests propios: los cubren las historias y T019.
   - Nota: `parseInput` lanza un `Error` (no `ContentValidationError`) si un esquema produce un problema de Zod sin `IssueCode` asignado, para que el fallo salga en los tests de cada historia. Los textos quitan los caracteres NUL, que Postgres no puede guardar, y las URL deben empezar por `https://` sin espacios. También se exportan `TEXT_LIMITS` (FR-021), `currentYearMonth` y las variantes `optional*`.
-- [ ] T009 [P] Crear las piezas compartidas de idioma, estado y orden:
+- [X] T009 [P] Crear las piezas compartidas de idioma, estado y orden:
   - En `src/content/locale.ts`: `Locale`, `SUPPORTED_LOCALES = ["en", "es"]`, `assertLocale(value)`, que lanza `ContentValidationError` con `field: "locale"` y `code: "unsupported_locale"` indicando los idiomas admitidos, y `resolveText(en, es, locale)`, que devuelve `es` solo si `locale === "es"` y `es` no está vacío tras recortar.
   - En `src/content/state.ts`: `touchContentState(tx)`, que pone `updated_at = now()` en la fila 1, y `getContentLastModified(db)`.
   - En `src/content/ordering.ts`:
     - `nextPosition(tx, table, scope?)`, que devuelve `coalesce(max(position), -1) + 1`;
     - `applyReorder(tx, table, ids, scope?)`, que lee los IDs existentes del ámbito, lanza `ContentValidationError` (`field: "ids"`, `code: "invalid_order"`) si `ids` omite, repite o incluye IDs ajenos, y si no, asigna `position = índice`.
   - Exportar `Locale` y `getContentLastModified` en `src/content/index.ts`. Sin tests propios: los cubren las historias.
+  - Nota: `touchContentState` hace upsert de la fila 1 (las escrituras funcionan sin semilla; research §8) y `getContentLastModified` lanza un error claro si la fila no existe. `applyReorder` bloquea las filas del ámbito con `FOR UPDATE`, rechaza también arrays con huecos y reordena con un solo `UPDATE … CASE`. `assertLocale` acepta `unknown`. Además, `optionalBilingualText` rechaza español sin inglés (`<campo>.en`, `required`), por la aclaración de FR-007; así el titular solo llega `null` si no tiene texto en ningún idioma.
 
 **Checkpoint**: el módulo tiene esquema, migración inicial, conexión, base de tests, validación, idioma, estado y orden; lint, tipos y build en verde.
 

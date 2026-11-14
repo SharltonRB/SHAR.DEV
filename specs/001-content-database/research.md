@@ -97,7 +97,7 @@ Los `code` son estables (por ejemplo `required`, `too_long`, `duplicate`, `not_e
 
 ## 8. Fecha de última modificación
 
-**Decision**: tabla `content_state` con una fila (`id = 1`, `updated_at`). Cada escritura correcta la actualiza en la misma transacción. Se lee con `getContentLastModified(db)`. La semilla la crea.
+**Decision**: tabla `content_state` con una fila (`id = 1`, `updated_at`). Cada escritura correcta la actualiza en la misma transacción. Se lee con `getContentLastModified(db)`. La semilla la crea con `ON CONFLICT DO NOTHING`, y las escrituras hacen upsert de la fila, así que también funcionan en una base sin semilla. `now()` es la hora de inicio de la transacción, no la del commit: si la funcionalidad 4 compara `updated_at` con la hora del último despliegue, debe tenerlo en cuenta (o usar un contador de versión).
 
 **Rationale**: FR-023, y la funcionalidad 4 la usa para saber si hay cambios sin publicar.
 

@@ -6,3 +6,5 @@ export {
   ContentValidationError,
   type IssueCode,
 } from "./errors";
+export type { Locale } from "./locale";
+export { getContentLastModified } from "./state";
