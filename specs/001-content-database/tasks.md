@@ -78,7 +78,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - Crear `tests/helpers/test-db.ts` con `createTestDb()`: `new PGlite()` en memoria, `drizzle` de `drizzle-orm/pglite` con el esquema y `migrate` de `drizzle-orm/pglite/migrator` sobre `./drizzle`.
   - Exportar `Database`, `createDb` y `getDb` en `src/content/index.ts`. Sin tests propios: FR-024 se prueba en T010 por la interfaz pública.
   - Nota: no hace falta `ws` (ver research.md §2). `createDb` devuelve `NeonDatabase & { $client: Pool }` para que T011 pueda usar el migrador de Neon y `$client.end()`; `createTestDb()` devuelve `Database & { $client: PGlite }` y resuelve `drizzle/` desde `import.meta.url`, sin depender del cwd (T011 debería hacer lo mismo). El `Pool` tiene un listener de `error` para que un cliente ocioso caído no tumbe el proceso.
-- [ ] T008 [P] Crear los errores y las piezas de validación:
+- [X] T008 [P] Crear los errores y las piezas de validación:
   - En `src/content/errors.ts`: `ContentValidationError` (`issues: { field, code, message }[]`) y `ContentNotFoundError` (`entity`, `id`), con el tipo `IssueCode` exacto de `contracts/content-module.md`.
   - En `src/content/validation.ts`, esquemas reutilizables Zod 4:
     - texto bilingüe con `en` obligatorio y `es` opcional;
@@ -90,6 +90,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - lista de tecnologías con al menos 1, cada una no vacía y de máx. 80.
   - También en `validation.ts`: todos los objetos de entrada con `z.strictObject` (campo desconocido → `unknown_field`) y la función `parseInput(schema, input)`, que convierte todos los problemas de Zod a `{ field: "ruta.con.puntos", code, message }` y lanza `ContentValidationError`.
   - Exportar los errores en `src/content/index.ts`. Sin tests propios: los cubren las historias y T019.
+  - Nota: `parseInput` lanza un `Error` (no `ContentValidationError`) si un esquema produce un problema de Zod sin `IssueCode` asignado, para que el fallo salga en los tests de cada historia. Los textos quitan los caracteres NUL, que Postgres no puede guardar, y las URL deben empezar por `https://` sin espacios. También se exportan `TEXT_LIMITS` (FR-021), `currentYearMonth` y las variantes `optional*`.
 - [ ] T009 [P] Crear las piezas compartidas de idioma, estado y orden:
   - En `src/content/locale.ts`: `Locale`, `SUPPORTED_LOCALES = ["en", "es"]`, `assertLocale(value)`, que lanza `ContentValidationError` con `field: "locale"` y `code: "unsupported_locale"` indicando los idiomas admitidos, y `resolveText(en, es, locale)`, que devuelve `es` solo si `locale === "es"` y `es` no está vacío tras recortar.
   - En `src/content/state.ts`: `touchContentState(tx)`, que pone `updated_at = now()` en la fila 1, y `getContentLastModified(db)`.
