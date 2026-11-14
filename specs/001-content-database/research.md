@@ -68,7 +68,7 @@ Fuera de esta funcionalidad: Tailwind, Preact, Better Auth, Vercel Blob, Resend,
 
 - **Longitudes en caracteres**: se cuentan puntos de código (`[...texto].length`), no unidades UTF-16, para que un emoji cuente como uno.
 - **Normalización**: se recortan los espacios de los extremos; un texto en español vacío o solo de espacios se guarda como `null` (FR-002).
-- **Límites no listados en FR-021**: nombre, título profesional, empresa, cargo, modalidad o ubicación, nombre de categoría, nombre de habilidad y nombre de tecnología se tratan como «títulos» (80). Es la interpretación más cercana a FR-021; si Sharlton prefiere otros límites, se cambia la spec.
+- **Límites no listados en FR-021**: nombre, título profesional, empresa, cargo, modalidad o ubicación, nombre de categoría, nombre de habilidad y nombre de tecnología se tratan como «títulos» (80). Quedó recogido en FR-021 tras `/speckit-analyze`.
 - **URL**: `https:` y válida para `new URL()` (FR-020). **Correo**: `z.email()`. **WhatsApp**: `^\+\d{8,15}$`.
 - **Fechas**: entrada `YYYY-MM`. Se guardan como `date` con día 1. «Futura» es posterior al mes en curso en `America/Costa_Rica`.
 

@@ -15,6 +15,7 @@ Alcance: backend
 ### Session 2026-11-13
 
 - Q: La semilla no trae texto para el titular del perfil, ¿es obligatorio? → A: El titular es opcional hasta que Sharlton lo entregue; la semilla lo deja vacío (FR-007, FR-025).
+- Q: (tras `/speckit-analyze`) ¿Qué límite tienen los textos cortos que FR-021 no listaba, y es obligatorio el texto alternativo de la imagen? → A: 80 caracteres, como los títulos (FR-021); el texto alternativo en inglés es obligatorio si hay imagen (FR-014). Un campo desconocido, como un nivel de habilidad, rechaza la escritura (US3-6).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -77,7 +78,7 @@ El administrador registra sus puestos de trabajo y agrupa sus habilidades por ca
 3. **Given** un puesto con más de 5 logros o sin ninguno, **When** se guarda, **Then** se rechaza.
 4. **Given** una categoría con habilidades, **When** el administrador cambia el orden de las habilidades dentro de ella, **Then** el contenido publicado las devuelve en ese orden.
 5. **Given** una categoría que todavía tiene habilidades, **When** el administrador intenta borrarla, **Then** se rechaza indicando que primero debe vaciarla.
-6. **Given** una habilidad, **When** se intenta guardar con un nivel, porcentaje o número de experiencia, **Then** ese dato no existe en el modelo y no se guarda ni se publica.
+6. **Given** una habilidad, **When** se intenta guardar con un nivel, porcentaje o número de experiencia, **Then** la escritura se rechaza indicando el campo desconocido; ese dato no existe en el modelo y nada se guarda ni se publica.
 7. **Given** una habilidad duplicada (mismo nombre, sin distinguir mayúsculas) dentro de la misma categoría, **When** se guarda, **Then** se rechaza.
 
 ---
@@ -138,7 +139,7 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 
 **Contenido publicado**
 
-- **FR-004**: El sistema MUST entregar, por idioma, en una sola consulta: perfil y About, valores, experiencia, categorías con sus habilidades, proyectos publicados y datos de contacto.
+- **FR-004**: El sistema MUST entregar, por idioma, en una sola llamada: perfil y About, valores, experiencia, categorías con sus habilidades, proyectos publicados y datos de contacto.
 - **FR-005**: Cada lista MUST devolverse en el orden definido por el administrador.
 - **FR-006**: Los proyectos en borrador MUST NOT aparecer en el contenido publicado.
 
@@ -160,7 +161,7 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 
 **Proyectos**
 
-- **FR-014**: Cada proyecto MUST tener título, descripción breve y al menos una tecnología. Puede tener enlace a la demo, enlace al código y una imagen con texto alternativo, todos opcionales.
+- **FR-014**: Cada proyecto MUST tener título, descripción breve y al menos una tecnología. Puede tener enlace a la demo, enlace al código y una imagen con texto alternativo, todos opcionales. Si tiene imagen, su texto alternativo en inglés es obligatorio.
 - **FR-015**: Cada proyecto MUST estar en estado borrador o publicado; los proyectos nuevos nacen en borrador.
 
 **Contacto**
@@ -173,7 +174,7 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 - **FR-018**: El reordenamiento MUST recibir la lista completa de elementos y rechazarla, sin aplicar cambios, si omite, repite o incluye elementos inexistentes. Los elementos nuevos se añaden al final.
 - **FR-019**: Toda escritura MUST validarse antes de guardarse. Un rechazo MUST indicar cada campo inválido y el motivo, sin guardar nada parcialmente.
 - **FR-020**: Los enlaces MUST ser URL `https` válidas; el correo, una dirección válida; el WhatsApp, `+` seguido de 8 a 15 dígitos.
-- **FR-021**: Los textos MUST respetar estas longitudes máximas: titular 120, eslogan 80, títulos 80, descripción de proyecto 300, logro 200, perfil, misión y visión 1200, descripción de valor 200, texto alternativo 150 caracteres.
+- **FR-021**: Los textos MUST respetar estas longitudes máximas: titular 120, eslogan 80, títulos 80 (también nombre, título profesional, empresa, cargo, modalidad o ubicación, nombre de categoría, de habilidad y de tecnología), descripción de proyecto 300, logro 200, perfil, misión y visión 1200, descripción de valor 200, texto alternativo 150 caracteres.
 - **FR-022**: El contenido MUST guardarse y devolverse como texto plano, sin interpretar marcado.
 - **FR-023**: Cada operación de escritura correcta MUST dejar constancia de la fecha de la última modificación del contenido, para que la publicación (funcionalidad 4) sepa que hay cambios.
 

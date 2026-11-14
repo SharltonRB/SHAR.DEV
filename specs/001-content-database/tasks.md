@@ -9,7 +9,7 @@ description: "Lista de tareas de la funcionalidad 001: contenido y base de datos
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/content-module.md, quickstart.md
 
-**Tests**: obligatorios por la constitución (principio IV). Cada escenario de aceptación y cada FR tiene al menos un test. Como una tarea solo se marca hecha con tests, lint y build en verde, **cada tarea incluye su implementación y sus tests**: primero se escribe el test, se ve fallar y después se implementa. Los tests usan solo lo que exporta `src/content/index.ts`. Las únicas excepciones son la comprobación de tablas de FR-024 y la de la semilla en US5, que leen la base directamente porque lo que prueban es justo su estado. Cada test nombra su escenario o requisito, por ejemplo `US2-4 rejects an order that omits a project` o `FR-021 ...`.
+**Tests**: obligatorios por la constitución (principio IV). Cada escenario de aceptación y cada FR tiene al menos un test. Como una tarea solo se marca hecha con tests, lint y build en verde, **cada tarea incluye su implementación y sus tests**: primero se escribe el test, se ve fallar y después se implementa. Los tests usan solo lo que exporta `src/content/index.ts`, sin leer ni escribir tablas directamente. Cada test nombra su escenario o requisito, por ejemplo `US2-4 rejects an order that omits a project` o `FR-021 ...`.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -41,7 +41,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - `src/pages/index.astro`: página provisional prerenderizada con un `<title>SHAR.DEV</title>` y un párrafo «Coming soon», sin estilos ni contenido de marca (la reemplaza la funcionalidad 6).
   - Comprobar que `pnpm build` y `pnpm typecheck` pasan.
 - [ ] T003 [P] Crear `biome.json` con el linter `recommended` y el formateador activos. Ignorar `drizzle/`, `dist/`, `.astro/`, `.vercel/`, `node_modules/` y `pnpm-lock.yaml`. Comprobar que `pnpm lint` pasa.
-- [ ] T004 [P] Crear `vitest.config.ts` con `environment: "node"`, `include: ["tests/**/*.test.ts"]` y `passWithNoTests: true` (se quita en T007, cuando exista el primer test). Comprobar que `pnpm test` pasa.
+- [ ] T004 [P] Crear `vitest.config.ts` con `environment: "node"`, `include: ["tests/**/*.test.ts"]` y `passWithNoTests: true` (se quita en T010, cuando exista el primer test). Comprobar que `pnpm test` pasa.
 - [ ] T005 Crear `.github/workflows/ci.yml`:
   - Disparadores: `push` a `main` y `pull_request`. Runner `ubuntu-latest`, sin secretos.
   - Pasos: checkout, `pnpm/action-setup` (lee `packageManager`), `actions/setup-node` con Node 24 y caché `pnpm`, `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test` y `pnpm build`.
@@ -71,8 +71,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - En `src/content/db.ts`: exportar el tipo `Database` (el `PgDatabase` común a los drivers de Neon y PGlite, tipado con el esquema), `createDb(url)` con `Pool` de `@neondatabase/serverless` y `drizzle-orm/neon-serverless`, y `getDb()`, perezoso, con un único `Pool` por proceso, que lanza un error claro si falta `DATABASE_URL`.
   - Comprobar si el driver necesita `neonConfig.webSocketConstructor` en Node 24. Si hace falta, añadir `ws` con versión exacta de al menos dos semanas y anotarlo en research.md §2.
   - Crear `tests/helpers/test-db.ts` con `createTestDb()`: `new PGlite()` en memoria, `drizzle` de `drizzle-orm/pglite` con el esquema y `migrate` de `drizzle-orm/pglite/migrator` sobre `./drizzle`.
-  - Test en `tests/content/setup.test.ts`: **FR-024**, las migraciones se aplican sobre una base vacía y crean las 8 tablas (consulta a `information_schema.tables`).
-  - Quitar `passWithNoTests` de `vitest.config.ts` y exportar `Database`, `createDb` y `getDb` en `src/content/index.ts`.
+  - Exportar `Database`, `createDb` y `getDb` en `src/content/index.ts`. Sin tests propios: FR-024 se prueba en T010 por la interfaz pública.
 - [ ] T008 [P] Crear los errores y las piezas de validación:
   - En `src/content/errors.ts`: `ContentValidationError` (`issues: { field, code, message }[]`) y `ContentNotFoundError` (`entity`, `id`), con el tipo `IssueCode` exacto de `contracts/content-module.md`.
   - En `src/content/validation.ts`, esquemas reutilizables Zod 4:
@@ -93,7 +92,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - `applyReorder(tx, table, ids, scope?)`, que lee los IDs existentes del ámbito, lanza `ContentValidationError` (`field: "ids"`, `code: "invalid_order"`) si `ids` omite, repite o incluye IDs ajenos, y si no, asigna `position = índice`.
   - Exportar `Locale` y `getContentLastModified` en `src/content/index.ts`. Sin tests propios: los cubren las historias.
 
-**Checkpoint**: migraciones aplicadas en PGlite en verde; el módulo tiene esquema, conexión, validación, idioma, estado y orden.
+**Checkpoint**: el módulo tiene esquema, migración inicial, conexión, base de tests, validación, idioma, estado y orden; lint, tipos y build en verde.
 
 ---
 
@@ -106,19 +105,23 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 - [ ] T010 [US5] Crear la semilla:
   - `src/content/seed-data.ts` con los textos copiados **literalmente** de `/Users/sharltonrb/Desktop/Proyectos/Personal/SharDev - portafolio/identidad-visual/contenido/perfil-mision-vision-valores.md` (solo lectura).
     - Perfil profesional, misión y visión EN/ES de las secciones 1, 2 y 3.
-    - Los 4 valores de la tabla de la sección 4 en su orden. Cada celda se parte en título y descripción por « — », sin cambiar mayúsculas ni puntuación. Por ejemplo, título `Autonomy` y descripción `I take ownership from design to production.`.
+    - Los 4 valores de la tabla de la sección 4 en su orden. Cada celda se parte en título y descripción por « — » y se quitan los `**` de negrita de la fuente, sin cambiar mayúsculas ni puntuación. Por ejemplo, título `Autonomy` y descripción `I take ownership from design to production.`.
     - `name` «Sharlton Romero»; `title` EN «Java Backend Engineer» y ES `null`; `slogan` «One endpoint at a time.» / «Un endpoint a la vez.»; `headline` `null`/`null`.
     - Contacto `sromerobpersonal@gmail.com` y `+50670429481`; LinkedIn y GitHub `null`.
   - `src/content/seed.ts` con `seedContent(db): Promise<{ applied: boolean }>`, en una sola transacción:
     1. insertar `profile` con `ON CONFLICT DO NOTHING` y `RETURNING`;
     2. si no devuelve fila, terminar con `{ applied: false }`;
     3. si la devuelve, insertar los 4 valores con `position` 0 a 3, `contact` y `content_state` (los dos con `ON CONFLICT DO NOTHING`) y devolver `{ applied: true }`.
-  - Exportar `seedContent` en `src/content/index.ts`.
-  - Tests en `tests/content/setup.test.ts`, leyendo las tablas con el `db` de PGlite:
+  - `getEditableContent(db)` en `src/content/published.ts`:
+    - devuelve todo el contenido con los dos idiomas sin resolver (`{ en, es }`), los borradores y el `status` de cada proyecto, el `id` y la `position`, en orden;
+    - sus tipos replican las entradas de escritura de `contracts/content-module.md`.
+  - Exportar `seedContent` y `getEditableContent` en `src/content/index.ts`, y quitar `passWithNoTests` de `vitest.config.ts`.
+  - Tests en `tests/content/setup.test.ts`, solo por la interfaz pública (`seedContent` y `getEditableContent`):
+    - **FR-024**: sobre una base PGlite vacía con las migraciones de `drizzle/` aplicadas, `seedContent` devuelve `applied: true` y `getEditableContent` responde.
     - **US5-1**: perfil, valores y contacto con los textos de `seed-data.ts`, y además la misión EN y el valor 1 ES escritos a mano en el test como control (SC-001).
-    - **US5-2**: tras la semilla, editar `mission_en` con un `UPDATE` directo, volver a sembrar y comprobar que la edición se conserva y que siguen siendo 1 perfil, 4 valores y 1 contacto (FR-026).
-    - **US5-3**: `experience`, `skill_categories`, `skills` y `projects` vacías.
-    - **SC-005**: el contenido tras dos ejecuciones es idéntico al de una sola, y la segunda devuelve `applied: false`.
+    - **US5-3**: experiencia, categorías y proyectos vacíos.
+    - **SC-005** y **FR-026**: tras dos ejecuciones, `getEditableContent` devuelve lo mismo que tras una sola (1 perfil, 4 valores, 1 contacto), y la segunda devuelve `applied: false`.
+    - **US5-2** (no pisar una edición) se prueba en T017, con `updateProfile`.
 - [ ] T011 [US5] Crear `scripts/db-setup.ts`:
   1. leer `DATABASE_URL` y salir con un mensaje claro si falta;
   2. `createDb(url)`;
@@ -129,7 +132,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
   Comprobar `pnpm typecheck`. La prueba contra Neon real queda para T022 (SC-007).
 
-**Checkpoint**: `pnpm test` cubre US5; `pnpm db:setup` está listo para una base real.
+**Checkpoint**: `pnpm test` cubre US5 salvo US5-2, que se completa en T017; `pnpm db:setup` está listo para una base real.
 
 ---
 
@@ -179,13 +182,11 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US2-5**: un enlace `http://` o inválido se rechaza indicando el campo.
     - **US2-6**: al borrar, los demás conservan su orden relativo.
     - **US2-7**: sin `title.en`, sin `description.en` o sin tecnologías se rechaza indicando los tres campos.
-    - Una imagen sin texto alternativo en inglés se rechaza.
+    - Una imagen sin texto alternativo en inglés se rechaza (FR-014).
+    - Un proyecto sin demo ni código es válido y llega con `demoUrl` y `codeUrl` en `null`.
     - Editar o borrar un ID inexistente da `ContentNotFoundError` sin efectos.
     - **FR-023**: `getContentLastModified` avanza tras una escritura correcta y no cambia tras una rechazada.
-- [ ] T014 [US2] Implementar `getEditableContent(db)` en `src/content/published.ts`:
-  - Devuelve todo el contenido con los dos idiomas sin resolver (`{ en, es }`), los borradores y el `status` de cada proyecto, el `id` y la `position`, en orden.
-  - Sus tipos replican las entradas de escritura de `contracts/content-module.md`.
-  - Exportar en `src/content/index.ts`.
+- [ ] T014 [US2] Probar los proyectos en las dos lecturas, `getPublishedContent` (T012) y `getEditableContent` (T010). Si un test falla, se corrige en `src/content/published.ts`.
   - Tests:
     - En `tests/content/published.test.ts`: **US1-3**, un proyecto publicado solo con texto en inglés aparece en `es` con título y descripción en inglés; **US1-4** y **SC-003**, con dos publicados y un borrador solo aparecen los dos publicados, en el orden definido, en los dos idiomas.
     - En `tests/content/projects.test.ts`: `getEditableContent` devuelve el borrador con su `status` y los dos idiomas.
@@ -211,6 +212,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **FR-010**: un inicio o un fin futuros se rechazan, usando `vi.setSystemTime`.
     - Caso límite: un puesto actual y otro pasado se devuelven en el orden del administrador, no por fecha.
     - Reordenar con un ID ajeno se rechaza.
+    - **FR-018**: un puesto nuevo va al final.
 - [ ] T016 [US3] Implementar en `src/content/skills.ts` `createSkillCategory`, `updateSkillCategory`, `deleteSkillCategory`, `reorderSkillCategories`, `createSkill(db, categoryId, input)`, `updateSkill`, `deleteSkill` y `reorderSkills(db, categoryId, ids)`:
   - **Entrada**: categoría `name` bilingüe con «EN obligatorio, máx. 80»; habilidad `name` «Sin traducción, máx. 80», sin ningún campo de nivel, porcentaje ni años.
   - **Reglas**:
@@ -226,6 +228,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US3-7**: `"Java"` y `"java"` en la misma categoría se rechazan; en categorías distintas se aceptan.
     - `reorderSkills` con una habilidad de otra categoría se rechaza.
     - Las categorías se publican en orden con sus habilidades (FR-011).
+    - **FR-018**: una categoría nueva va al final de las categorías, y una habilidad nueva, al final de su categoría.
 
 **Checkpoint**: US3 completa; experiencia y habilidades se gestionan y se publican.
 
@@ -247,6 +250,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US4-1**: cambiar solo `summary.es` cambia `es` y deja `en` igual.
     - **US4-2**: un texto obligatorio en inglés vacío se rechaza indicando el campo.
     - **US4-3**: reordenar, añadir y borrar valores se refleja; el 7.º y el borrado del último se rechazan (FR-008).
+    - **FR-018**: un valor nuevo va al final.
     - **FR-007**: el titular vacío se acepta y llega `null`; con texto, llega en su idioma.
     - **US5-2** con la operación real: tras `updateProfile`, `seedContent` no pisa la edición.
 - [ ] T018 [US4] Implementar `updateContact` en `src/content/contact.ts`:
@@ -271,6 +275,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - **FR-022**: tildes, ñ, comillas, `<script>alert(1)</script>` y emoji se guardan y vuelven idénticos.
   - **FR-002** y **SC-002**: un español de solo espacios en proyecto, valor, puesto y categoría llega en inglés y nunca vacío.
   - **FR-001**: los nombres de tecnologías y habilidades, el correo, el WhatsApp y las URL llegan iguales en `en` y `es`.
+  - **FR-023**: cada función de escritura, al terminar bien, avanza `getContentLastModified`; si se rechaza, no lo cambia.
 
   Si algún test falla por un hueco de la implementación, se corrige en el archivo del módulo afectado.
 - [ ] T020 **SC-006**: añadir a `tests/content/published.test.ts` un test que siembra 50 elementos (proyectos, puestos y habilidades) con las operaciones públicas y comprueba que `getPublishedContent` responde en menos de 2 s.
@@ -281,6 +286,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 - [ ] T022 Validar `quickstart.md` de principio a fin:
   - **Escenario A**: todo en verde y sin desvío en `drizzle/`.
   - **Escenario B**: `pnpm db:setup` dos veces contra una rama vacía de Neon Free. **Requiere que Sharlton cree el proyecto de Neon y ponga `DATABASE_URL` en `.env.local`.** Hasta entonces, la tarea queda abierta y se informa.
+  - **SC-006** contra Neon: medir `getPublishedContent` con la semilla, incluido el primer acceso tras el arranque en frío del cómputo, y anotar el tiempo en `research.md`.
   - Comprobar en GitHub Actions que el CI pasa en `main`.
 
 ---
@@ -293,7 +299,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 - **Foundational (Phase 2)**: depende de Setup y bloquea todas las historias.
 - **US5 (Phase 3)**: depende de Foundational.
 - **US1 (Phase 4)**: depende de US5, porque sus tests parten de la semilla.
-- **US2 (Phase 5)**: depende de US1 (T014 amplía `published.ts` y prueba los escenarios US1-3 y US1-4).
+- **US2 (Phase 5)**: depende de US1 (T014 prueba los escenarios US1-3 y US1-4 sobre `getPublishedContent`).
 - **US3 (Phase 6)** y **US4 (Phase 7)**: dependen de US1 (verifican por el contenido publicado). Son independientes entre sí y de US2.
 - **Polish (Phase 8)**: depende de todas las historias.
 
@@ -364,11 +370,11 @@ Task: "T016 [US3] skills.ts + tests/content/skills.test.ts"
 | FR-017 | T013–T018 |
 | FR-018 | T009, T013, T015, T016, T017 |
 | FR-019, FR-020, FR-021, FR-022 | T008, T013, T015, T017, T018, T019 |
-| FR-023 | T009, T013 |
-| FR-024 | T006, T007 |
+| FR-023 | T009, T013, T019 |
+| FR-024 | T006, T010 |
 | FR-025, FR-026 | T010, T017 |
 | SC-001 a SC-005 | T010, T012, T014, T019 |
-| SC-006 | T020 |
+| SC-006 | T020, T022 |
 | SC-007 | T011, T022 |
 
 ---
