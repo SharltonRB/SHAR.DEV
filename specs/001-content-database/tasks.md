@@ -29,12 +29,13 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Purpose**: esqueleto del proyecto con lint, tipos, tests, build y CI.
 
-- [ ] T001 Crear `package.json` en la raíz:
+- [X] T001 Crear `package.json` en la raíz:
   - Campos: `"name": "shar-dev"`, `"private": true`, `"type": "module"`, `"packageManager": "pnpm@11.28.10"`, `"engines": { "node": ">=24" }`.
   - Scripts: `dev` (`astro dev`), `build` (`astro build`), `preview` (`astro preview`), `lint` (`biome check .`), `format` (`biome format --write .`), `typecheck` (`astro check`), `test` (`vitest run`), `db:generate` (`drizzle-kit generate`), `db:setup` (`tsx --env-file=.env.local scripts/db-setup.ts`).
   - Instalar con `pnpm add -E` estas versiones exactas: `astro@7.4.4`, `@astrojs/vercel@11.0.17`, `drizzle-orm@0.45.4`, `@neondatabase/serverless@1.2.0`, `zod@4.6.7`.
   - Instalar con `pnpm add -D -E`: `typescript@6.0.3`, `@astrojs/check@0.9.12`, `drizzle-kit@0.31.11`, `@electric-sql/pglite@0.5.13`, `vitest@4.1.12`, `@biomejs/biome@2.6.4`, `tsx@4.23.15`, `@types/node@26.6.6`.
   - Subir `pnpm-lock.yaml`. Crear `.env.example` con una sola línea, `DATABASE_URL=`. `.gitignore` ya ignora `.env.*` salvo `.env.example`.
+  - Nota: se añadió `pnpm-workspace.yaml` con `allowBuilds: { esbuild: true }` (pnpm 11 falla el install si bloquea su postinstall) y `minimumReleaseAge: 20160`, para que la regla de dos semanas valga también para las dependencias transitivas. `pnpm audit` avisa de fallos en astro 7.4.4 que no aplican hoy; subir astro a la primera versión corregida con dos semanas (7.4.5 las cumple el 2026-11-16) antes de la funcionalidad del panel.
 - [ ] T002 Configurar Astro:
   - `astro.config.mjs`: `adapter: vercel()` de `@astrojs/vercel`, sin `output` explícito (estático por defecto).
   - `tsconfig.json`: extiende `astro/tsconfigs/strict` e incluye `src`, `tests`, `scripts`, `drizzle.config.ts` y `vitest.config.ts`.
