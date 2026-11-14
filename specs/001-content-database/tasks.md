@@ -62,7 +62,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Definir las 8 tablas en `src/content/schema.ts` exactamente como en `data-model.md`:
+- [X] T006 Definir las 8 tablas en `src/content/schema.ts` exactamente como en `data-model.md`:
   - `profile` y `contact` y `content_state`: `id integer PRIMARY KEY CHECK (id = 1)`.
   - `profile_values`, `experience`, `skill_categories`, `skills`, `projects`: `id integer GENERATED ALWAYS AS IDENTITY` y `position integer NOT NULL`.
   - Textos bilingües como pares `<campo>_en text NOT NULL` / `<campo>_es text NULL`. `headline_en` y `headline_es` nulos los dos. `image_alt_en` e `image_alt_es` nulos.

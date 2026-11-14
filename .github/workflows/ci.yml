@@ -33,9 +33,7 @@ jobs:
       # Without a TTY, drizzle-kit exits 0 on ambiguous changes (rename vs.
       # drop + add) without writing files, so require its explicit
       # "no changes" message.
-      # Skipped until drizzle.config.ts exists (T006).
       - name: Check schema drift
-        if: hashFiles('drizzle.config.ts') != ''
         run: |
           out="$(pnpm db:generate 2>&1)"
           echo "$out"
