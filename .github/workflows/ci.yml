@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      # Reads the pnpm version from "packageManager" in package.json.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+      # Fails if src/content/schema.ts changed without committing its migration.
+      # Without a TTY, drizzle-kit exits 0 on ambiguous changes (rename vs.
+      # drop + add) without writing files, so require its explicit
+      # "no changes" message.
+      # Skipped until drizzle.config.ts exists (T006).
+      - name: Check schema drift
+        if: hashFiles('drizzle.config.ts') != ''
+        run: |
+          out="$(pnpm db:generate 2>&1)"
+          echo "$out"
+          grep -q "No schema changes" <<<"$out"
+          git diff --exit-code drizzle/
+          test -z "$(git status --porcelain drizzle/)"

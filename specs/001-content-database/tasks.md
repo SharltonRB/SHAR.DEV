@@ -45,11 +45,12 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 - [X] T003 [P] Crear `biome.json` con el linter `recommended` y el formateador activos. Ignorar `drizzle/`, `dist/`, `.astro/`, `.vercel/`, `node_modules/` y `pnpm-lock.yaml`. Comprobar que `pnpm lint` pasa.
   - Nota: Biome 2.6.4 pide `rules.preset` en vez de `recommended: true`; sangría de 2 espacios como el resto del repo; `vcs.useIgnoreFile` para respetar `.gitignore`; sin formateo de Markdown; se excluyen también `.specify/`, `.agents/` y `.claude/` (Spec Kit); override para `*.astro` (modo heredado) y `css.parser.tailwindDirectives` para Tailwind 4.
 - [X] T004 [P] Crear `vitest.config.ts` con `environment: "node"`, `include: ["tests/**/*.test.ts"]` y `passWithNoTests: true` (se quita en T010, cuando exista el primer test). Comprobar que `pnpm test` pasa.
-- [ ] T005 Crear `.github/workflows/ci.yml`:
+- [X] T005 Crear `.github/workflows/ci.yml`:
   - Disparadores: `push` a `main` y `pull_request`. Runner `ubuntu-latest`, sin secretos.
   - Pasos: checkout, `pnpm/action-setup` (lee `packageManager`), `actions/setup-node` con Node 24 y caché `pnpm`, `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test` y `pnpm build`.
   - Paso final de desvío del esquema: `pnpm db:generate` y después `git diff --exit-code drizzle/` y `test -z "$(git status --porcelain drizzle/)"`.
   - Fijar cada acción a su versión mayor vigente, verificándola en su repositorio de GitHub al implementar.
+  - Nota: `checkout@v7`, `pnpm/action-setup@v6` y `setup-node@v7` (mayores con más de dos semanas); `permissions: contents: read` y `timeout-minutes: 15`. El paso de desvío se salta hasta que exista `drizzle.config.ts` (la guarda se quita en T006) y además exige el mensaje «No schema changes», porque sin TTY drizzle-kit sale con 0 sin generar nada ante un cambio ambiguo (renombrar frente a borrar y añadir).
 
 **Checkpoint**: `pnpm lint && pnpm typecheck && pnpm test && pnpm build` en verde, en local y en GitHub Actions.
 
@@ -70,6 +71,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - `projects.status text NOT NULL DEFAULT 'draft'` con `CHECK (status IN ('draft', 'published'))` y `CHECK (image_url IS NULL OR image_alt_en IS NOT NULL)`.
   - `contact.whatsapp` con `CHECK` `^\+\d{8,15}$`; `content_state.updated_at timestamptz NOT NULL DEFAULT now()`.
   - Crear `drizzle.config.ts` (`dialect: "postgresql"`, `schema: "./src/content/schema.ts"`, `out: "./drizzle"`, `dbCredentials.url` desde `process.env.DATABASE_URL`, y carga de `.env.local` con `process.loadEnvFile` solo si el archivo existe). Ejecutar `pnpm db:generate` y subir la migración inicial de `drizzle/`.
+  - En `.github/workflows/ci.yml`, quitar la línea `if: hashFiles('drizzle.config.ts') != ''` del paso «Check schema drift» y su comentario «Skipped until…», para que el control no se apague en silencio si la config cambia de nombre.
 - [ ] T007 Crear la conexión y la base de tests:
   - En `src/content/db.ts`: exportar el tipo `Database` (el `PgDatabase` común a los drivers de Neon y PGlite, tipado con el esquema), `createDb(url)` con `Pool` de `@neondatabase/serverless` y `drizzle-orm/neon-serverless`, y `getDb()`, perezoso, con un único `Pool` por proceso, que lanza un error claro si falta `DATABASE_URL`.
   - Comprobar si el driver necesita `neonConfig.webSocketConstructor` en Node 24. Si hace falta, añadir `ws` con versión exacta de al menos dos semanas y anotarlo en research.md §2.
