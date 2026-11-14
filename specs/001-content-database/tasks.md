@@ -42,7 +42,8 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - `src/pages/index.astro`: página provisional prerenderizada con un `<title>SHAR.DEV</title>` y un párrafo «Coming soon», sin estilos ni contenido de marca (la reemplaza la funcionalidad 6).
   - Comprobar que `pnpm build` y `pnpm typecheck` pasan.
   - Nota: el `include` de `tsconfig.json` también lleva `.astro/types.d.ts`, porque un `include` propio reemplaza el del base, y `astro.config.mjs`, para que `astro check` revise la config.
-- [ ] T003 [P] Crear `biome.json` con el linter `recommended` y el formateador activos. Ignorar `drizzle/`, `dist/`, `.astro/`, `.vercel/`, `node_modules/` y `pnpm-lock.yaml`. Comprobar que `pnpm lint` pasa.
+- [X] T003 [P] Crear `biome.json` con el linter `recommended` y el formateador activos. Ignorar `drizzle/`, `dist/`, `.astro/`, `.vercel/`, `node_modules/` y `pnpm-lock.yaml`. Comprobar que `pnpm lint` pasa.
+  - Nota: Biome 2.6.4 pide `rules.preset` en vez de `recommended: true`; sangría de 2 espacios como el resto del repo; `vcs.useIgnoreFile` para respetar `.gitignore`; sin formateo de Markdown; se excluyen también `.specify/`, `.agents/` y `.claude/` (Spec Kit); override para `*.astro` (modo heredado) y `css.parser.tailwindDirectives` para Tailwind 4.
 - [ ] T004 [P] Crear `vitest.config.ts` con `environment: "node"`, `include: ["tests/**/*.test.ts"]` y `passWithNoTests: true` (se quita en T010, cuando exista el primer test). Comprobar que `pnpm test` pasa.
 - [ ] T005 Crear `.github/workflows/ci.yml`:
   - Disparadores: `push` a `main` y `pull_request`. Runner `ubuntu-latest`, sin secretos.
