@@ -10,6 +10,12 @@ Alcance: backend
 
 **Input**: User description: "Funcionalidad 1 de docs/funcionalidades.md: Contenido y base de datos. Esqueleto del proyecto y CI. Modelo de perfil/About, experiencia, habilidades (por categoría, sin niveles), proyectos y contacto, con textos EN/ES y respaldo en EN si falta el ES. Crear, editar, borrar y ordenar; borrador o publicado en proyectos. Base de datos con migraciones y semilla con el contenido ya redactado (perfil, misión, visión, valores, contacto)."
 
+## Clarifications
+
+### Session 2026-11-13
+
+- Q: La semilla no trae texto para el titular del perfil, ¿es obligatorio? → A: El titular es opcional hasta que Sharlton lo entregue; la semilla lo deja vacío (FR-007, FR-025).
+
 ## User Scenarios & Testing *(mandatory)*
 
 Actores:
@@ -138,7 +144,7 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 
 **Perfil y About**
 
-- **FR-007**: El perfil MUST existir siempre como registro único, con: nombre, título profesional, eslogan, titular, perfil profesional, misión y visión.
+- **FR-007**: El perfil MUST existir siempre como registro único, con: nombre, título profesional, eslogan, titular, perfil profesional, misión y visión. El titular es opcional (puede quedar vacío en ambos idiomas) hasta que Sharlton entregue su texto; los demás textos son obligatorios en inglés.
 - **FR-008**: Los valores MUST ser entre 1 y 6, cada uno con título y descripción, y con orden editable.
 
 **Experiencia**
@@ -174,7 +180,7 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 **Datos y entornos**
 
 - **FR-024**: La estructura de datos MUST crearse y evolucionar con migraciones versionadas, aplicables sobre una base vacía.
-- **FR-025**: La semilla MUST cargar los textos aprobados de perfil, misión, visión y valores en EN y ES (fuente: `identidad-visual/contenido/perfil-mision-vision-valores.md`), el nombre «Sharlton Romero», el título «Java Backend Engineer», el eslogan «One endpoint at a time.» / «Un endpoint a la vez.» y el contacto sromerobpersonal@gmail.com y +50670429481.
+- **FR-025**: La semilla MUST cargar los textos aprobados de perfil, misión, visión y valores en EN y ES (fuente: `identidad-visual/contenido/perfil-mision-vision-valores.md`), el nombre «Sharlton Romero», el título «Java Backend Engineer», el eslogan «One endpoint at a time.» / «Un endpoint a la vez.» y el contacto sromerobpersonal@gmail.com y +50670429481. El titular queda vacío.
 - **FR-026**: La semilla MUST ser idempotente: si el contenido ya existe, no duplica ni sobrescribe nada.
 
 ### Key Entities *(include if feature involves data)*

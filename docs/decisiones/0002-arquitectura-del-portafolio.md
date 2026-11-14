@@ -305,6 +305,8 @@ src/
     api/contacto.ts, api/auth/[...all].ts      prerender = false
 ```
 
+> Nota (2026-11-13, aprobada por Sharlton): el acceso a Neon usa el driver WebSocket de `@neondatabase/serverless` (`drizzle-orm/neon-serverless`) en lugar del HTTP, porque las escrituras del contenido necesitan transacciones interactivas. Los tests de integración usan PGlite. Detalle en `specs/001-content-database/research.md`.
+
 > Nota (2026-11-13): el código del repo va en inglés, así que los módulos se llaman `content/`, `messages/`, `publishing/`, `files/`, `auth/` y `ui/` (equivalentes a `contenido/`, `mensajes/`, `publicacion/`, `archivos/`, `auth/` y `ui/`).
 
 Reglas de dependencia:
