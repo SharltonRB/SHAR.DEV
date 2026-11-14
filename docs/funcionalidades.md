@@ -7,7 +7,7 @@ Las funcionalidades de backend (1 a 5) van antes de `/contrato` y `/definir-dise
 
 | # | Funcionalidad | Qué hace | Alcance | Depende de | Spec | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Contenido y base de datos | Esqueleto del proyecto y CI. Modelo de perfil/About, experiencia, habilidades (por categoría, sin niveles), proyectos y contacto, con textos EN/ES y respaldo en EN si falta el ES. Crear, editar, borrar y ordenar; borrador o publicado en proyectos. Neon con migraciones y semilla con el contenido ya redactado (perfil, misión, visión, valores, contacto). | backend | — | | pendiente |
+| 1 | Contenido y base de datos | Esqueleto del proyecto y CI. Modelo de perfil/About, experiencia, habilidades (por categoría, sin niveles), proyectos y contacto, con textos EN/ES y respaldo en EN si falta el ES. Crear, editar, borrar y ordenar; borrador o publicado en proyectos. Neon con migraciones y semilla con el contenido ya redactado (perfil, misión, visión, valores, contacto). | backend | — | [specs/001-content-database](../specs/001-content-database/spec.md) | en curso |
 | 2 | Acceso al panel | Login con GitHub restringido a tu ID numérico, sesión, protección de `/admin` y de las acciones del panel, y pantalla de «acceso denegado». | backend | — | | pendiente |
 | 3 | Archivos | Subida directa a Vercel Blob de imágenes de proyectos y del CV en PDF, reemplazo y limpieza de archivos huérfanos. | backend | 1, 2 | | pendiente |
 | 4 | Publicación | El build lee Neon y genera el sitio estático. Al guardar, deploy hook con antirrebote; botón «Publicar ahora»; estado del último despliegue. | backend | 1, 2 | | pendiente |
