@@ -17,7 +17,7 @@ function createDb(url: string): Database; // para scripts que reciben la URL
 ```ts
 type Locale = "en" | "es";
 type BilingualInput = { en: string; es?: string | null };          // en obligatorio salvo que se indique
-type OptionalBilingualInput = { en?: string | null; es?: string | null };
+type OptionalBilingualInput = { en?: string | null; es?: string | null }; // es sin en → required en `<campo>.en`
 type YearMonth = `${number}-${number}`;                             // "YYYY-MM"
 type Id = number;
 ```

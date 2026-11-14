@@ -258,7 +258,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US4-2**: un texto obligatorio en inglés vacío se rechaza indicando el campo.
     - **US4-3**: reordenar, añadir y borrar valores se refleja; el 7.º y el borrado del último se rechazan (FR-008).
     - **FR-018**: un valor nuevo va al final.
-    - **FR-007**: el titular vacío se acepta y llega `null`; con texto, llega en su idioma.
+    - **FR-007**: el titular vacío se acepta y llega `null`; con texto, llega en su idioma; solo en español se rechaza (`field: "headline.en"`, `code: "required"`).
     - **US5-2** con la operación real: tras `updateProfile`, `seedContent` no pisa la edición.
 - [ ] T018 [US4] Implementar `updateContact` en `src/content/contact.ts`:
   - **Entrada**: `email` «Correo válido»; `whatsapp` `^\+\d{8,15}$`; `linkedinUrl` y `githubUrl` opcionales, «`https` válida».

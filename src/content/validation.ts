@@ -142,10 +142,24 @@ export function bilingualText(max: number) {
   return z.strictObject({ en: requiredText(max), es: optionalText(max) });
 }
 
-/** Optional in both languages; a missing object reads as both `null`. */
+/**
+ * Optional in both languages; a missing object reads as both `null`.
+ * Spanish without English is rejected, since English is the main language
+ * and the fallback (FR-001, FR-007).
+ */
 export function optionalBilingualText(max: number) {
   return z
     .strictObject({ en: optionalText(max), es: optionalText(max) })
+    .superRefine((value, ctx) => {
+      if (value.en === null && value.es !== null) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["en"],
+          message: "Required when the Spanish text is set.",
+          params: { code: "required" },
+        });
+      }
+    })
     .nullish()
     .transform((value) => value ?? { en: null, es: null });
 }

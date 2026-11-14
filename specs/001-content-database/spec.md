@@ -16,6 +16,7 @@ Alcance: backend
 
 - Q: La semilla no trae texto para el titular del perfil, ¿es obligatorio? → A: El titular es opcional hasta que Sharlton lo entregue; la semilla lo deja vacío (FR-007, FR-025).
 - Q: (tras `/speckit-analyze`) ¿Qué límite tienen los textos cortos que FR-021 no listaba, y es obligatorio el texto alternativo de la imagen? → A: 80 caracteres, como los títulos (FR-021); el texto alternativo en inglés es obligatorio si hay imagen (FR-014). Un campo desconocido, como un nivel de habilidad, rechaza la escritura (US3-6).
+- Q: (al implementar T009) ¿Se acepta un titular o un texto alternativo solo en español? → A: No. Un texto opcional puede quedar vacío en los dos idiomas, pero si tiene español, el inglés es obligatorio (FR-001, FR-007).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -145,7 +146,7 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 
 **Perfil y About**
 
-- **FR-007**: El perfil MUST existir siempre como registro único, con: nombre, título profesional, eslogan, titular, perfil profesional, misión y visión. El titular es opcional (puede quedar vacío en ambos idiomas) hasta que Sharlton entregue su texto; los demás textos son obligatorios en inglés.
+- **FR-007**: El perfil MUST existir siempre como registro único, con: nombre, título profesional, eslogan, titular, perfil profesional, misión y visión. El titular es opcional (puede quedar vacío en ambos idiomas) hasta que Sharlton entregue su texto, pero si tiene texto en español también MUST tenerlo en inglés (FR-001); los demás textos son obligatorios en inglés.
 - **FR-008**: Los valores MUST ser entre 1 y 6, cada uno con título y descripción, y con orden editable.
 
 **Experiencia**
