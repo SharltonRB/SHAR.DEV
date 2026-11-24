@@ -18,7 +18,9 @@ export {
   type EditableSkillCategory,
   type EditableValue,
   getEditableContent,
+  getPublishedContent,
   type OptionalBilingualText,
+  type PublishedContent,
   type YearMonth,
 } from "./published";
 export { seedContent } from "./seed";

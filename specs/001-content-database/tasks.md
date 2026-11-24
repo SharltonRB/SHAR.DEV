@@ -152,7 +152,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Independent Test**: con la semilla cargada, pedir el contenido en `en` y en `es` y comprobar que llegan todos los bloques, en orden, en el idioma correcto y sin borradores.
 
-- [ ] T012 [US1] Implementar `getPublishedContent(db, locale)` en `src/content/published.ts`:
+- [X] T012 [US1] Implementar `getPublishedContent(db, locale)` en `src/content/published.ts`:
   - Llamar a `assertLocale` y después leer todos los bloques en una transacción de solo lectura.
   - Ordenar cada lista por `position` (y las habilidades por `position` dentro de su categoría), filtrar proyectos con `status = 'published'` y resolver cada texto con `resolveText`.
   - Formato de salida:
@@ -168,6 +168,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US1-5**: `"fr"` se rechaza con `unsupported_locale` y el mensaje nombra `en` y `es` (FR-003).
     - **US1-6**: `experience`, `skillCategories` y `projects` llegan como `[]` y el resto completo (FR-004).
     - `headline` es `null` con la semilla.
+  - Nota: `getPublishedContent` y `getEditableContent` comparten la lectura `readContentRows` (instantánea `repeatable read` de solo lectura). Los borradores se filtran en memoria tras leer.
 
 **Checkpoint**: MVP. El build del sitio (funcionalidad 6) ya puede leer el contenido sembrado.
 

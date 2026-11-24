@@ -1,5 +1,6 @@
 import { asc } from "drizzle-orm";
 import type { Database } from "./db";
+import { assertLocale, type Locale, resolveText } from "./locale";
 import {
   type BilingualItem,
   contact,
@@ -90,6 +91,50 @@ export type EditableContent = {
   contact: EditableContact;
 };
 
+/** The content of the public site in one locale, texts already resolved. */
+export type PublishedContent = {
+  locale: Locale;
+  profile: {
+    name: string;
+    title: string;
+    slogan: string;
+    /** Null when it has no text in either language. */
+    headline: string | null;
+    summary: string;
+    mission: string;
+    vision: string;
+  };
+  values: { id: number; title: string; description: string }[];
+  experience: {
+    id: number;
+    company: string;
+    role: string;
+    location: string;
+    startMonth: YearMonth;
+    /** Null for the current position. */
+    endMonth: YearMonth | null;
+    /** Only for the current position. */
+    endLabel: "Present" | "Presente" | null;
+    achievements: string[];
+    technologies: string[];
+  }[];
+  skillCategories: {
+    id: number;
+    name: string;
+    skills: { id: number; name: string }[];
+  }[];
+  projects: {
+    id: number;
+    title: string;
+    description: string;
+    technologies: string[];
+    demoUrl: string | null;
+    codeUrl: string | null;
+    image: { url: string; alt: string } | null;
+  }[];
+  contact: EditableContact;
+};
+
 /** One consistent snapshot of every block, without taking write locks. */
 const READ_SNAPSHOT = {
   isolationLevel: "repeatable read",
@@ -108,10 +153,8 @@ function toYearMonth(value: string): YearMonth {
   return value.slice(0, 7) as YearMonth;
 }
 
-/** Reads all the content for the admin forms, drafts included. */
-export async function getEditableContent(
-  db: Database,
-): Promise<EditableContent> {
+/** Reads every table in one snapshot, each list in the administrator's order. */
+async function readContentRows(db: Database) {
   return db.transaction(async (tx) => {
     const [profileRow] = await tx.select().from(profile);
     const [contactRow] = await tx.select().from(contact);
@@ -141,63 +184,159 @@ export async function getEditableContent(
       .from(projects)
       .orderBy(asc(projects.position), asc(projects.id));
 
-    const skillsByCategory = Map.groupBy(skillRows, (row) => row.categoryId);
-
     return {
-      profile: {
-        name: profileRow.name,
-        title: bilingual(profileRow.titleEn, profileRow.titleEs),
-        slogan: bilingual(profileRow.sloganEn, profileRow.sloganEs),
-        headline: bilingual(profileRow.headlineEn, profileRow.headlineEs),
-        summary: bilingual(profileRow.summaryEn, profileRow.summaryEs),
-        mission: bilingual(profileRow.missionEn, profileRow.missionEs),
-        vision: bilingual(profileRow.visionEn, profileRow.visionEs),
-      },
-      values: valueRows.map((row) => ({
-        id: row.id,
-        position: row.position,
-        title: bilingual(row.titleEn, row.titleEs),
-        description: bilingual(row.descriptionEn, row.descriptionEs),
+      profileRow,
+      contactRow,
+      valueRows,
+      experienceRows,
+      categoryRows,
+      // Grouping keeps the global order, so each category's skills stay sorted.
+      skillsByCategory: Map.groupBy(skillRows, (row) => row.categoryId),
+      projectRows,
+    };
+  }, READ_SNAPSHOT);
+}
+
+function toContact(row: typeof contact.$inferSelect): EditableContact {
+  return {
+    email: row.email,
+    whatsapp: row.whatsapp,
+    linkedinUrl: row.linkedinUrl,
+    githubUrl: row.githubUrl,
+  };
+}
+
+/** Reads all the content for the admin forms, drafts included. */
+export async function getEditableContent(
+  db: Database,
+): Promise<EditableContent> {
+  const rows = await readContentRows(db);
+  const { profileRow } = rows;
+
+  return {
+    profile: {
+      name: profileRow.name,
+      title: bilingual(profileRow.titleEn, profileRow.titleEs),
+      slogan: bilingual(profileRow.sloganEn, profileRow.sloganEs),
+      headline: bilingual(profileRow.headlineEn, profileRow.headlineEs),
+      summary: bilingual(profileRow.summaryEn, profileRow.summaryEs),
+      mission: bilingual(profileRow.missionEn, profileRow.missionEs),
+      vision: bilingual(profileRow.visionEn, profileRow.visionEs),
+    },
+    values: rows.valueRows.map((row) => ({
+      id: row.id,
+      position: row.position,
+      title: bilingual(row.titleEn, row.titleEs),
+      description: bilingual(row.descriptionEn, row.descriptionEs),
+    })),
+    experience: rows.experienceRows.map((row) => ({
+      id: row.id,
+      position: row.position,
+      company: row.company,
+      role: bilingual(row.roleEn, row.roleEs),
+      startMonth: toYearMonth(row.startMonth),
+      endMonth: row.endMonth === null ? null : toYearMonth(row.endMonth),
+      location: bilingual(row.locationEn, row.locationEs),
+      achievements: row.achievements,
+      technologies: row.technologies,
+    })),
+    skillCategories: rows.categoryRows.map((row) => ({
+      id: row.id,
+      position: row.position,
+      name: bilingual(row.nameEn, row.nameEs),
+      skills: (rows.skillsByCategory.get(row.id) ?? []).map((skill) => ({
+        id: skill.id,
+        position: skill.position,
+        name: skill.name,
       })),
-      experience: experienceRows.map((row) => ({
-        id: row.id,
-        position: row.position,
-        company: row.company,
-        role: bilingual(row.roleEn, row.roleEs),
-        startMonth: toYearMonth(row.startMonth),
-        endMonth: row.endMonth === null ? null : toYearMonth(row.endMonth),
-        location: bilingual(row.locationEn, row.locationEs),
-        achievements: row.achievements,
-        technologies: row.technologies,
+    })),
+    projects: rows.projectRows.map((row) => ({
+      id: row.id,
+      position: row.position,
+      status: row.status,
+      title: bilingual(row.titleEn, row.titleEs),
+      description: bilingual(row.descriptionEn, row.descriptionEs),
+      technologies: row.technologies,
+      demoUrl: row.demoUrl,
+      codeUrl: row.codeUrl,
+      imageUrl: row.imageUrl,
+      imageAlt: bilingual(row.imageAltEn, row.imageAltEs),
+    })),
+    contact: toContact(rows.contactRow),
+  };
+}
+
+const PRESENT_LABEL = { en: "Present", es: "Presente" } as const;
+
+/**
+ * Everything the public site shows in one locale, read at build time: each
+ * text resolved with English as the fallback (FR-001, FR-002), every list
+ * in the administrator's order and only published projects (FR-004 to
+ * FR-006). Rejects any locale other than `en` and `es` (FR-003).
+ */
+export async function getPublishedContent(
+  db: Database,
+  locale: string,
+): Promise<PublishedContent> {
+  assertLocale(locale);
+  const rows = await readContentRows(db);
+  const { profileRow } = rows;
+  const text = <T extends string | null>(en: T, es: string | null) =>
+    resolveText(en, es, locale);
+
+  return {
+    locale,
+    profile: {
+      name: profileRow.name,
+      title: text(profileRow.titleEn, profileRow.titleEs),
+      slogan: text(profileRow.sloganEn, profileRow.sloganEs),
+      headline: text(profileRow.headlineEn, profileRow.headlineEs),
+      summary: text(profileRow.summaryEn, profileRow.summaryEs),
+      mission: text(profileRow.missionEn, profileRow.missionEs),
+      vision: text(profileRow.visionEn, profileRow.visionEs),
+    },
+    values: rows.valueRows.map((row) => ({
+      id: row.id,
+      title: text(row.titleEn, row.titleEs),
+      description: text(row.descriptionEn, row.descriptionEs),
+    })),
+    experience: rows.experienceRows.map((row) => ({
+      id: row.id,
+      company: row.company,
+      role: text(row.roleEn, row.roleEs),
+      location: text(row.locationEn, row.locationEs),
+      startMonth: toYearMonth(row.startMonth),
+      endMonth: row.endMonth === null ? null : toYearMonth(row.endMonth),
+      endLabel: row.endMonth === null ? PRESENT_LABEL[locale] : null,
+      achievements: row.achievements.map((item) => text(item.en, item.es)),
+      technologies: row.technologies,
+    })),
+    skillCategories: rows.categoryRows.map((row) => ({
+      id: row.id,
+      name: text(row.nameEn, row.nameEs),
+      skills: (rows.skillsByCategory.get(row.id) ?? []).map((skill) => ({
+        id: skill.id,
+        name: skill.name,
       })),
-      skillCategories: categoryRows.map((row) => ({
+    })),
+    projects: rows.projectRows
+      .filter((row) => row.status === "published")
+      .map((row) => ({
         id: row.id,
-        position: row.position,
-        name: bilingual(row.nameEn, row.nameEs),
-        skills: (skillsByCategory.get(row.id) ?? []).map((skill) => ({
-          id: skill.id,
-          position: skill.position,
-          name: skill.name,
-        })),
-      })),
-      projects: projectRows.map((row) => ({
-        id: row.id,
-        position: row.position,
-        status: row.status,
-        title: bilingual(row.titleEn, row.titleEs),
-        description: bilingual(row.descriptionEn, row.descriptionEs),
+        title: text(row.titleEn, row.titleEs),
+        description: text(row.descriptionEn, row.descriptionEs),
         technologies: row.technologies,
         demoUrl: row.demoUrl,
         codeUrl: row.codeUrl,
-        imageUrl: row.imageUrl,
-        imageAlt: bilingual(row.imageAltEn, row.imageAltEs),
+        // The schema requires English alt text whenever there is an image.
+        image:
+          row.imageUrl === null
+            ? null
+            : {
+                url: row.imageUrl,
+                alt: text(row.imageAltEn ?? "", row.imageAltEs),
+              },
       })),
-      contact: {
-        email: contactRow.email,
-        whatsapp: contactRow.whatsapp,
-        linkedinUrl: contactRow.linkedinUrl,
-        githubUrl: contactRow.githubUrl,
-      },
-    };
-  }, READ_SNAPSHOT);
+    contact: toContact(rows.contactRow),
+  };
 }
