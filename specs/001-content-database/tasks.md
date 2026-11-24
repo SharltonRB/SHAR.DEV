@@ -110,7 +110,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Independent Test**: sobre una base vacía, aplicar migraciones y semilla dos veces seguidas y comprobar el contenido resultante.
 
-- [ ] T010 [US5] Crear la semilla:
+- [X] T010 [US5] Crear la semilla:
   - `src/content/seed-data.ts` con los textos copiados **literalmente** de `/Users/sharltonrb/Desktop/Proyectos/Personal/SharDev - portafolio/identidad-visual/contenido/perfil-mision-vision-valores.md` (solo lectura).
     - Perfil profesional, misión y visión EN/ES de las secciones 1, 2 y 3.
     - Los 4 valores de la tabla de la sección 4 en su orden. Cada celda se parte en título y descripción por « — » y se quitan los `**` de negrita de la fuente, sin cambiar mayúsculas ni puntuación. Por ejemplo, título `Autonomy` y descripción `I take ownership from design to production.`.
@@ -130,6 +130,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US5-3**: experiencia, categorías y proyectos vacíos.
     - **SC-005** y **FR-026**: tras dos ejecuciones, `getEditableContent` devuelve lo mismo que tras una sola (1 perfil, 4 valores, 1 contacto), y la segunda devuelve `applied: false`.
     - **US5-2** (no pisar una edición) se prueba en T017, con `updateProfile`.
+  - Nota: `getEditableContent` lee en una transacción `repeatable read` de solo lectura (una sola instantánea), ordena por `position` y después por `id`, y lanza un error claro si falta el perfil o el contacto. Sus tipos `Editable*`, `BilingualText`, `OptionalBilingualText` y `YearMonth` se exportan en `index.ts`. Los tests también comprueban que la semilla crea `content_state` y que la segunda ejecución no cambia `getContentLastModified`.
 - [ ] T011 [US5] Crear `scripts/db-setup.ts`:
   1. leer `DATABASE_URL` y salir con un mensaje claro si falta;
   2. `createDb(url)`;
