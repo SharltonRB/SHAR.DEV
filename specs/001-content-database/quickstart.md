@@ -39,6 +39,10 @@ pnpm db:generate # genera SQL en drizzle/ tras cambiar src/content/schema.ts
 pnpm db:setup    # migraciones + semilla contra DATABASE_URL (SC-007)
 ```
 
+```bash
+pnpm content:import <ruta.json>  # sustituye experiencia, habilidades y proyectos (US6)
+```
+
 Al terminar la funcionalidad, estos comandos se copian a la sección «Comandos» de `AGENTS.md`.
 
 ## Escenarios de validación
@@ -74,6 +78,12 @@ pnpm test -- --reporter=verbose
 
 **Esperado:** hay un test por escenario de aceptación y por FR, y todos pasan (principio IV).
 
-### E. Rendimiento (SC-006)
+### E. Carga desde archivo (US6, SC-008)
+
+1. Copia `scripts/portfolio.example.json`, pon tu contenido real y ejecuta `pnpm content:import <tu archivo>` contra Neon. **Esperado:** informa cuántos puestos, categorías, habilidades y proyectos quedaron.
+2. Ejecútalo otra vez con el mismo archivo. **Esperado:** mismo resultado, sin duplicados.
+3. Rompe un campo (por ejemplo, un enlace `http://`). **Esperado:** se rechaza indicando el elemento y el campo, y el contenido no cambia.
+
+### F. Rendimiento (SC-006)
 
 Un test siembra 50 elementos de contenido en PGlite y comprueba que `getPublishedContent` responde en menos de 2 segundos.

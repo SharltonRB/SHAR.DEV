@@ -14,7 +14,8 @@ Se monta el esqueleto del proyecto (Astro 7 con el adaptador de Vercel, TypeScri
 - validación de entrada con Zod;
 - operaciones de crear, editar, borrar y ordenar para valores, experiencia, categorías, habilidades y proyectos, y de edición para perfil y contacto;
 - lectura del contenido publicado por idioma con respaldo al inglés;
-- semilla idempotente con los textos aprobados.
+- semilla idempotente con los textos aprobados;
+- carga desde un archivo JSON local de experiencia, habilidades y proyectos (`importContent` y `pnpm content:import <ruta>`), para la entrega 1 del 2026-11-27, que va sin panel (cambio del 2026-11-23, historia 6).
 
 Producción usa Neon con el driver WebSocket, para tener transacciones interactivas. Los tests corren contra PGlite en memoria con las mismas migraciones. No se expone nada por HTTP: el login llega en la funcionalidad 2 y el panel en la 7.
 
@@ -85,7 +86,9 @@ tsconfig.json                   extiende astro/tsconfigs/strict
 vitest.config.ts
 .env.example                    DATABASE_URL=
 scripts/
-└── db-setup.ts                 migrate (neon-serverless) + seedContent
+├── db-setup.ts                 migrate (neon-serverless) + seedContent
+├── content-import.ts           lee el JSON de la ruta dada y llama a importContent
+└── portfolio.example.json      plantilla con datos ficticios evidentes
 src/
 ├── content/
 │   ├── index.ts                única superficie pública (contracts/content-module.md)
@@ -102,6 +105,7 @@ src/
 │   ├── experience.ts
 │   ├── skills.ts               categorías y habilidades
 │   ├── projects.ts
+│   ├── import.ts               importContent (reutiliza los esquemas de experience, skills y projects)
 │   ├── seed.ts                 seedContent
 │   └── seed-data.ts            textos aprobados, literales de la fuente
 └── pages/
@@ -116,7 +120,8 @@ tests/
     ├── skills.test.ts          US3 (habilidades), FR-011..013
     ├── profile.test.ts         US4, FR-007, FR-008, FR-016, FR-021
     ├── validation.test.ts      FR-019, FR-021, FR-022 y casos límite
-    └── setup.test.ts           US5, FR-023..026, SC-005
+    ├── setup.test.ts           US5, FR-023..026, SC-005
+    └── import.test.ts          US6, FR-027, FR-028, SC-008
 ```
 
 **Structure Decision**: un solo proyecto Astro en la raíz, con la estructura modular de `AGENTS.md`. Esta funcionalidad crea solo `src/content/` y una página provisional. Los demás módulos (`messages/`, `publishing/`, `files/`, `auth/`, `ui/`) se crean en sus funcionalidades. Los tests van en `tests/` y prueban solo lo que exporta `src/content/index.ts`.
@@ -129,7 +134,8 @@ tests/
 4. Perfil, valores y contacto, y después la semilla y `db:setup` (US4, US5).
 5. Proyectos (US2), seguidos de experiencia y habilidades (US3).
 6. Lectura publicada y editable (US1), con el test de rendimiento.
-7. Actualizar la sección «Comandos» de `AGENTS.md` y probar `pnpm db:setup` contra una rama real de Neon.
+7. Carga desde archivo (US6), después de US2, US3 y US4 porque reutiliza sus esquemas.
+8. Actualizar la sección «Comandos» de `AGENTS.md` y probar `pnpm db:setup` contra una rama real de Neon.
 
 ## Complexity Tracking
 

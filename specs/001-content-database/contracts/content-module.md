@@ -106,6 +106,24 @@ Los `update*` reemplazan el elemento completo: reciben la misma forma que el `cr
 
 Inserta el contenido aprobado solo si el perfil no existe (`applied: true`). Si ya existe, no cambia nada (`applied: false`). Ver [data-model.md](../data-model.md#semilla-fr-025-fr-026).
 
+## Carga desde archivo
+
+### `importContent(db, input): Promise<{ experience: number; skillCategories: number; skills: number; projects: number }>`
+
+Sustituye por completo experiencia, categorías con sus habilidades y proyectos por los de `input`, en su orden (FR-027, FR-028). Devuelve cuántos elementos quedaron de cada tipo.
+
+```ts
+type ImportInput = {
+  experience: ExperienceInput[];                         // misma forma que createExperience
+  skillCategories: { name: BilingualInput; skills: string[] }[];
+  projects: (ProjectInput & { status?: "draft" | "published" })[]; // ProjectInput = entrada de createProject
+};
+```
+
+1. Valida la entrada completa (`z.strictObject`) con los mismos esquemas que las funciones de escritura. Las rutas de `field` llevan el prefijo del elemento: `experience.0.technologies`, `skillCategories.1.skills.2`, `projects.2.demoUrl`. Un nombre de habilidad repetido sin distinguir mayúsculas dentro de una categoría da `duplicate`. Si algo falla, lanza `ContentValidationError` con todos los problemas.
+2. En una sola transacción: borra habilidades, categorías, experiencia y proyectos; inserta los del archivo con `position` 0 a n − 1 (las habilidades, por categoría); un proyecto sin `status` queda `draft`; actualiza `content_state.updated_at`.
+3. No toca `profile`, `profile_value` ni `contact`. Si algo falla, no deja nada aplicado.
+
 ## Errores
 
 ```ts

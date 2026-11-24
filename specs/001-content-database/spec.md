@@ -113,7 +113,25 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 
 1. **Given** una base vacía, **When** se aplican las migraciones y la semilla, **Then** existen el perfil, la misión, la visión y los 4 valores en EN y ES con los textos aprobados, y los datos de contacto (correo y WhatsApp).
 2. **Given** la semilla ya aplicada y el perfil editado por el administrador, **When** se vuelve a ejecutar la semilla, **Then** no se duplica nada ni se pisa la edición.
-3. **Given** la semilla, **When** termina, **Then** experiencia, habilidades y proyectos quedan vacíos (ese contenido lo entrega Sharlton más adelante).
+3. **Given** la semilla, **When** termina, **Then** experiencia, habilidades y proyectos quedan vacíos (ese contenido lo carga la historia 6).
+
+---
+
+### User Story 6 - Cargar contenido desde un archivo (Priority: P1)
+
+Mientras no exista el panel (entrega 1, 2026-11-27), Sharlton escribe su experiencia, sus habilidades y sus proyectos en un archivo local y los carga con un comando. Para cambiar algo, edita el archivo y lo vuelve a cargar.
+
+**Why this priority**: Sin esto, las secciones Experiencia, Habilidades y Proyectos del sitio de la entrega 1 salen vacías.
+
+**Independent Test**: Sobre una base con la semilla, cargar un archivo de ejemplo, editarlo, volver a cargarlo y comprobar el contenido resultante.
+
+**Acceptance Scenarios**:
+
+1. **Given** la semilla aplicada y un archivo válido con 2 puestos, 2 categorías con habilidades y 3 proyectos, **When** se carga, **Then** el contenido contiene exactamente esos elementos, en el orden del archivo y con el estado de cada proyecto indicado en él.
+2. **Given** un archivo ya cargado, **When** se quita un proyecto del archivo, se cambia un logro y se vuelve a cargar, **Then** el contenido refleja el archivo nuevo, sin duplicados ni restos del anterior.
+3. **Given** un archivo con un puesto sin tecnologías y un proyecto con un enlace que no es `https`, **When** se carga, **Then** se rechaza indicando cada elemento y campo inválido, y el contenido no cambia.
+4. **Given** contenido ya cargado, **When** se carga un archivo, **Then** el perfil, los valores y el contacto no cambian.
+5. **Given** un archivo que no existe o no se puede leer, **When** se intenta cargar, **Then** se informa el motivo y el contenido no cambia.
 
 ---
 
@@ -185,6 +203,11 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 - **FR-025**: La semilla MUST cargar los textos aprobados de perfil, misión, visión y valores en EN y ES (fuente: `identidad-visual/contenido/perfil-mision-vision-valores.md`), el nombre «Sharlton Romero», el título «Java Backend Engineer», el eslogan «One endpoint at a time.» / «Un endpoint a la vez.» y el contacto sromerobpersonal@gmail.com y +50670429481. El titular queda vacío.
 - **FR-026**: La semilla MUST ser idempotente: si el contenido ya existe, no duplica ni sobrescribe nada.
 
+**Carga desde archivo**
+
+- **FR-027**: Un comando MUST cargar experiencia, categorías con sus habilidades y proyectos desde un archivo local, sustituyendo por completo esas tres listas por las del archivo y en su orden. Un proyecto sin estado en el archivo queda en borrador (FR-015). El perfil, los valores y el contacto no se tocan.
+- **FR-028**: La carga MUST aplicar las mismas validaciones que las operaciones de escritura (FR-009 a FR-022) y ser atómica: si algún elemento es inválido, se rechaza todo indicando cada elemento y campo, y no se guarda nada. Una carga correcta deja constancia de la última modificación (FR-023).
+
 ### Key Entities *(include if feature involves data)*
 
 - **Texto bilingüe**: par inglés (obligatorio) y español (opcional) que usan todos los textos visibles.
@@ -208,14 +231,16 @@ Al preparar un entorno nuevo (desarrollo, pruebas o producción), la estructura 
 - **SC-005**: Ejecutar la semilla dos veces seguidas deja exactamente el mismo contenido que ejecutarla una vez.
 - **SC-006**: Con 50 elementos de contenido, obtener todo el contenido publicado de un idioma tarda menos de 2 segundos.
 - **SC-007**: Crear un entorno nuevo con la estructura de datos y el contenido inicial requiere un solo comando documentado.
+- **SC-008**: Cargar el mismo archivo dos veces seguidas deja exactamente el mismo contenido que cargarlo una vez.
 
 ## Assumptions
 
 - Un único administrador; no hay control de concurrencia más allá de «gana el último guardado».
-- Las operaciones de escritura no se exponen en internet hasta que la funcionalidad 2 las proteja con login. Mientras tanto solo se usan desde los tests y la semilla.
+- Las operaciones de escritura no se exponen en internet hasta que la funcionalidad 2 las proteja con login. Mientras tanto solo se usan desde los tests, la semilla y la carga desde archivo.
 - La subida de imágenes y del CV es de la funcionalidad 3. Aquí el proyecto solo guarda la referencia a su imagen y el texto alternativo.
 - El esqueleto del proyecto (estructura de módulos, comandos de desarrollo, tests y lint) y la integración continua se montan en esta funcionalidad, según `AGENTS.md` y `docs/decisiones/0002`.
 - La experiencia no tiene estado borrador o publicado: todo puesto guardado se publica. Solo los proyectos tienen borrador.
 - Los enlaces a LinkedIn y GitHub se dejan vacíos en la semilla salvo que Sharlton los entregue antes de implementar.
 - Las fechas de experiencia se guardan con precisión de mes; el formato visible por idioma es cosa del sitio público (funcionalidad 6).
-- El contenido de experiencia, habilidades y proyectos no se inventa: lo carga Sharlton.
+- El contenido de experiencia, habilidades y proyectos no se inventa: lo carga Sharlton, con la carga desde archivo (historia 6) hasta que exista el panel.
+- En la entrega 1 los proyectos van sin imagen: no hay subida de archivos hasta la funcionalidad 3.

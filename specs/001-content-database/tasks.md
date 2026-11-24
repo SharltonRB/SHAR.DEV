@@ -273,6 +273,36 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 ---
 
+## Phase 7b: User Story 6 - Cargar contenido desde un archivo (Priority: P1)
+
+**Goal**: sin panel (entrega 1, 2026-11-27), cargar experiencia, habilidades y proyectos desde un archivo JSON local y recargarlo tras editarlo.
+
+**Independent Test**: sobre una base con la semilla, cargar un archivo de ejemplo, editarlo, volver a cargarlo y comprobar el contenido resultante.
+
+- [ ] T023 [US6] Implementar `importContent(db, input)` en `src/content/import.ts`, como en `contracts/content-module.md` («Carga desde archivo»):
+  - **Entrada**: `z.strictObject` con `experience`, `skillCategories` y `projects`, reutilizando los esquemas de entrada de T013, T015 y T016 (exportarlos desde esos archivos solo para el módulo, no en `src/content/index.ts`). `status` de proyecto opcional, `draft` por defecto. Las rutas de `field` llevan el prefijo del elemento (`projects.2.demoUrl`). Habilidad repetida sin distinguir mayúsculas en una categoría: `duplicate`.
+  - **Escritura**: una sola transacción que borra habilidades, categorías, experiencia y proyectos, inserta lo nuevo con `position` 0 a n − 1 y llama a `touchContentState`. No toca perfil, valores ni contacto.
+  - Exportar `importContent` y el tipo `ImportInput` en `src/content/index.ts`.
+  - Tests en `tests/content/import.test.ts`, con datos ficticios evidentes:
+    - **US6-1**: 2 puestos, 2 categorías con habilidades y 3 proyectos (uno sin `status`) quedan en el orden del archivo; el proyecto sin `status` es borrador y no aparece en `getPublishedContent`.
+    - **US6-2**: recargar sin un proyecto y con un logro cambiado refleja el archivo nuevo, sin duplicados ni restos.
+    - **US6-3** y **FR-028**: un puesto sin tecnologías y un proyecto con enlace `http://` se rechazan con un `issue` por cada uno (`experience.0.technologies`, `projects.1.demoUrl`) y el contenido no cambia.
+    - **US6-4**: perfil, valores y contacto no cambian tras una carga.
+    - **SC-008**: cargar el mismo archivo dos veces da el mismo `getEditableContent` que una vez.
+    - **FR-023**: una carga correcta avanza `getContentLastModified`; una rechazada no.
+- [ ] T024 [US6] Crear `scripts/content-import.ts` y la plantilla `scripts/portfolio.example.json`:
+  1. leer la ruta del primer argumento y `DATABASE_URL`; salir con un mensaje claro si falta alguno;
+  2. leer y parsear el JSON; si el archivo no existe, no se puede leer o no es JSON válido, informar el motivo y salir sin tocar la base (**US6-5**);
+  3. `createDb(url)` y `importContent`; imprimir los conteos devueltos;
+  4. ante `ContentValidationError`, imprimir cada `field` con su `code` y salir con código distinto de 0;
+  5. cerrar el `Pool` (`db.$client.end()`).
+  - Añadir a `package.json` `"content:import": "tsx --env-file=.env.local scripts/content-import.ts"`.
+  - `portfolio.example.json` usa datos ficticios evidentes («Test Company», «Test Project») y pasa la validación: un test en `tests/content/import.test.ts` lo carga con `importContent`.
+
+**Checkpoint**: las seis historias completas; el sitio de la entrega 1 tiene todo su contenido.
+
+---
+
 ## Phase 8: Polish & Cross-Cutting Concerns
 
 **Purpose**: requisitos transversales, rendimiento, documentación y validación real.
@@ -288,12 +318,13 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   Si algún test falla por un hueco de la implementación, se corrige en el archivo del módulo afectado.
 - [ ] T020 **SC-006**: añadir a `tests/content/published.test.ts` un test que siembra 50 elementos (proyectos, puestos y habilidades) con las operaciones públicas y comprueba que `getPublishedContent` responde en menos de 2 s.
 - [ ] T021 [P] Actualizar la sección «Comandos» de `AGENTS.md`:
-  - sustituir «Aún no hay código…» por los comandos de `quickstart.md` (`pnpm install`, `dev`, `lint`, `format`, `typecheck`, `test`, `build`, `db:generate`, `db:setup`);
+  - sustituir «Aún no hay código…» por los comandos de `quickstart.md` (`pnpm install`, `dev`, `lint`, `format`, `typecheck`, `test`, `build`, `db:generate`, `db:setup`, `content:import <ruta.json>`);
   - añadir la nota de que los tests usan PGlite y no necesitan `DATABASE_URL`;
   - añadir que `.env.local` lleva `DATABASE_URL`.
 - [ ] T022 Validar `quickstart.md` de principio a fin:
   - **Escenario A**: todo en verde y sin desvío en `drizzle/`.
   - **Escenario B**: `pnpm db:setup` dos veces contra una rama vacía de Neon Free. **Requiere que Sharlton cree el proyecto de Neon y ponga `DATABASE_URL` en `.env.local`.** Hasta entonces, la tarea queda abierta y se informa.
+  - **Escenario E**: `pnpm content:import` dos veces con el archivo real de Sharlton contra Neon (**SC-008**). Si aún no lo entregó, se prueba con `scripts/portfolio.example.json` y se informa.
   - **SC-006** contra Neon: medir `getPublishedContent` con la semilla, incluido el primer acceso tras el arranque en frío del cómputo, y anotar el tiempo en `research.md`.
   - Comprobar en GitHub Actions que el CI pasa en `main`.
 
@@ -309,6 +340,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 - **US1 (Phase 4)**: depende de US5, porque sus tests parten de la semilla.
 - **US2 (Phase 5)**: depende de US1 (T014 prueba los escenarios US1-3 y US1-4 sobre `getPublishedContent`).
 - **US3 (Phase 6)** y **US4 (Phase 7)**: dependen de US1 (verifican por el contenido publicado). Son independientes entre sí y de US2.
+- **US6 (Phase 7b)**: depende de US2 y US3 (reutiliza sus esquemas) y de US4 (US6-4 comprueba que perfil y contacto no cambian).
 - **Polish (Phase 8)**: depende de todas las historias.
 
 ### User Story Dependencies
@@ -317,7 +349,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 Setup → Foundational → US5 → US1 (MVP) ─┬─► US2
                                         ├─► US3
                                         └─► US4
-                                              └─► Polish
+                                              └─► US6 ─► Polish
 ```
 
 ### Within Each User Story
@@ -361,7 +393,8 @@ Task: "T016 [US3] skills.ts + tests/content/skills.test.ts"
 1. MVP (US5 + US1).
 2. US2 (proyectos): lo que más cambia.
 3. US3 (experiencia y habilidades) y US4 (perfil y contacto).
-4. Polish: tests transversales, rendimiento, `AGENTS.md` y validación contra Neon.
+4. US6 (carga desde archivo): necesaria para la entrega 1 del 2026-11-27, que va sin panel.
+5. Polish: tests transversales, rendimiento, `AGENTS.md` y validación contra Neon.
 
 ## Cobertura de requisitos
 
@@ -381,7 +414,9 @@ Task: "T016 [US3] skills.ts + tests/content/skills.test.ts"
 | FR-023 | T009, T013, T019 |
 | FR-024 | T006, T010 |
 | FR-025, FR-026 | T010, T017 |
+| FR-027, FR-028 | T023, T024 |
 | SC-001 a SC-005 | T010, T012, T014, T019 |
+| SC-008 | T023, T022 |
 | SC-006 | T020, T022 |
 | SC-007 | T011, T022 |
 
