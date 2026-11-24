@@ -83,6 +83,16 @@ function withoutIds(value: unknown): unknown {
 }
 
 describe("importContent (US6)", () => {
+  it("FR-019 reports a duplicate skill together with a missing category name", async () => {
+    const file = testFile();
+    file.skillCategories = [{ skills: ["Java", "java"] } as never];
+
+    expect(await rejectedFields(importContent(db, file))).toEqual([
+      { field: "skillCategories.0.name", code: "required" },
+      { field: "skillCategories.0.skills.1", code: "duplicate" },
+    ]);
+  });
+
   it("the example template scripts/portfolio.example.json is valid", async () => {
     const template = JSON.parse(
       readFileSync(

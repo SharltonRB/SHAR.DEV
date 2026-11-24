@@ -5,30 +5,36 @@ import { importedProjectSchema, toProjectColumns } from "./projects";
 import { experience, projects, skillCategories, skills } from "./schema";
 import { skillCategoryInputSchema, skillInputSchema } from "./skills";
 import { touchContentState } from "./state";
-import { parseInput } from "./validation";
+import { parseInput, whenFieldsValid } from "./validation";
+
+const importedCategoryFields = {
+  ...skillCategoryInputSchema.shape,
+  skills: z.array(skillInputSchema.shape.name),
+};
 
 /** A category in the import file, with its skills as plain names. */
 const importedCategorySchema = z
-  .strictObject({
-    ...skillCategoryInputSchema.shape,
-    skills: z.array(skillInputSchema.shape.name),
-  })
-  .superRefine((value, ctx) => {
-    // Same rule as createSkill: unique per category, ignoring case (FR-013).
-    const seen = new Set<string>();
-    value.skills.forEach((name, index) => {
-      const key = name.toLowerCase();
-      if (seen.has(key)) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["skills", index],
-          message: "Another skill in this category has the same name.",
-          params: { code: "duplicate" },
-        });
-      }
-      seen.add(key);
-    });
-  });
+  .strictObject(importedCategoryFields)
+  .superRefine(
+    (value, ctx) => {
+      // Same rule as createSkill: unique per category, ignoring case (FR-013).
+      const seen = new Set<string>();
+      value.skills.forEach((name, index) => {
+        const key = name.toLowerCase();
+        if (seen.has(key)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["skills", index],
+            message: "Another skill in this category has the same name.",
+            params: { code: "duplicate" },
+          });
+        }
+        seen.add(key);
+      });
+    },
+    // A wrong category name must not hide a duplicate (FR-019).
+    whenFieldsValid(importedCategoryFields, "skills"),
+  );
 
 /** The whole import file. The three keys are required; `[]` empties a section. */
 export const importInputSchema = z.strictObject({

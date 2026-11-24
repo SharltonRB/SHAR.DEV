@@ -45,7 +45,7 @@ function requireImageAlt(
 }
 
 /** Input of `createProject` and `updateProject` (FR-014). */
-const imageFieldsValid = whenFieldsValid("imageUrl", "imageAlt");
+const imageFieldsValid = whenFieldsValid(projectFields, "imageUrl", "imageAlt");
 
 export const projectInputSchema = z
   .strictObject(projectFields)

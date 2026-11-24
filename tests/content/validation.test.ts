@@ -249,6 +249,9 @@ describe("validation across the module", () => {
     const categoryId = (await createSkillCategory(db, { name: { en: "Cat" } }))
       .id;
     const skillId = (await createSkill(db, categoryId, { name: "Java" })).id;
+    const emptyCategoryId = (
+      await createSkillCategory(db, { name: { en: "Empty" } })
+    ).id;
     const values = (await getEditableContent(db)).values.map((v) => v.id);
     const empty = { en: "" };
 
@@ -387,11 +390,7 @@ describe("validation across the module", () => {
       ],
       [
         "deleteSkillCategory",
-        async () =>
-          deleteSkillCategory(
-            db,
-            (await createSkillCategory(db, { name: { en: "Empty" } })).id,
-          ),
+        () => deleteSkillCategory(db, emptyCategoryId),
         () => deleteSkillCategory(db, categoryId),
       ],
       [

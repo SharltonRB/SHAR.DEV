@@ -16,21 +16,23 @@ import {
   yearMonth,
 } from "./validation";
 
+const experienceFields = {
+  company: requiredText(TEXT_LIMITS.title),
+  role: bilingualText(TEXT_LIMITS.title),
+  startMonth: yearMonth(),
+  /** Null or missing for the current position. */
+  endMonth: optionalYearMonth(),
+  location: bilingualText(TEXT_LIMITS.title),
+  achievements: z
+    .array(bilingualText(TEXT_LIMITS.achievement))
+    .min(1, "At least one achievement is required.")
+    .max(5, "At most 5 achievements."),
+  technologies: technologies(),
+};
+
 /** Input of `createExperience` and `updateExperience` (FR-009, FR-010). */
 export const experienceInputSchema = z
-  .strictObject({
-    company: requiredText(TEXT_LIMITS.title),
-    role: bilingualText(TEXT_LIMITS.title),
-    startMonth: yearMonth(),
-    /** Null or missing for the current position. */
-    endMonth: optionalYearMonth(),
-    location: bilingualText(TEXT_LIMITS.title),
-    achievements: z
-      .array(bilingualText(TEXT_LIMITS.achievement))
-      .min(1, "At least one achievement is required.")
-      .max(5, "At most 5 achievements."),
-    technologies: technologies(),
-  })
+  .strictObject(experienceFields)
   .superRefine(
     (value, ctx) => {
       // `YYYY-MM` strings sort in calendar order. Runs only when both months
@@ -44,7 +46,7 @@ export const experienceInputSchema = z
         });
       }
     },
-    whenFieldsValid("startMonth", "endMonth"),
+    whenFieldsValid(experienceFields, "startMonth", "endMonth"),
   );
 
 export type ExperienceInput = z.input<typeof experienceInputSchema>;

@@ -141,8 +141,13 @@ export const optionalText = (max: number) => optional(maxLength(max));
  * Options for an object-level rule that reads only `fields`. Zod skips such
  * a rule whenever any other field is missing; this runs it as long as its
  * own fields are valid, so every problem is reported at once (FR-019).
+ * `fields` are typed against the object's shape, so a misspelt name, which
+ * would let the rule read an untransformed value, does not compile.
  */
-export function whenFieldsValid(...fields: string[]) {
+export function whenFieldsValid<Shape extends z.ZodRawShape>(
+  _shape: Shape,
+  ...fields: (keyof Shape & string)[]
+) {
   return {
     when: (payload: z.core.ParsePayload) =>
       payload.issues.every((issue) => {
