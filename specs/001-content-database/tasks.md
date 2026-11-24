@@ -131,7 +131,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **SC-005** y **FR-026**: tras dos ejecuciones, `getEditableContent` devuelve lo mismo que tras una sola (1 perfil, 4 valores, 1 contacto), y la segunda devuelve `applied: false`.
     - **US5-2** (no pisar una edición) se prueba en T017, con `updateProfile`.
   - Nota: `getEditableContent` lee en una transacción `repeatable read` de solo lectura (una sola instantánea), ordena por `position` y después por `id`, y lanza un error claro si falta el perfil o el contacto. Sus tipos `Editable*`, `BilingualText`, `OptionalBilingualText` y `YearMonth` se exportan en `index.ts`. Los tests también comprueban que la semilla crea `content_state` y que la segunda ejecución no cambia `getContentLastModified`.
-- [ ] T011 [US5] Crear `scripts/db-setup.ts`:
+- [X] T011 [US5] Crear `scripts/db-setup.ts`:
   1. leer `DATABASE_URL` y salir con un mensaje claro si falta;
   2. `createDb(url)`;
   3. `migrate` de `drizzle-orm/neon-serverless/migrator` con `migrationsFolder: "./drizzle"`;
@@ -140,6 +140,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   6. cerrar el `Pool` (`db.$client.end()`) y salir con código distinto de 0 si algo falla.
 
   Comprobar `pnpm typecheck`. La prueba contra Neon real queda para T022 (SC-007).
+  - Nota: `drizzle/` se resuelve desde `import.meta.url`. Probado sin `DATABASE_URL` y con una URL inalcanzable: los dos casos salen con 1. Un fallo de conexión llega como evento de WebSocket sin mensaje, así que el script añade «could not connect: check DATABASE_URL».
 
 **Checkpoint**: `pnpm test` cubre US5 salvo US5-2, que se completa en T017; `pnpm db:setup` está listo para una base real.
 
