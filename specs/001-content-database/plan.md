@@ -122,9 +122,11 @@ tests/
     ├── validation.test.ts      FR-019, FR-021, FR-022 y casos límite
     ├── setup.test.ts           US5, FR-023..026, SC-005
     └── import.test.ts          US6, FR-027, FR-028, SC-008
+└── scripts/
+    └── content-import.test.ts  US6-5, lanzando el script en un proceso hijo
 ```
 
-**Structure Decision**: un solo proyecto Astro en la raíz, con la estructura modular de `AGENTS.md`. Esta funcionalidad crea solo `src/content/` y una página provisional. Los demás módulos (`messages/`, `publishing/`, `files/`, `auth/`, `ui/`) se crean en sus funcionalidades. Los tests van en `tests/` y prueban solo lo que exporta `src/content/index.ts`.
+**Structure Decision**: un solo proyecto Astro en la raíz, con la estructura modular de `AGENTS.md`. Esta funcionalidad crea solo `src/content/` y una página provisional. Los demás módulos (`messages/`, `publishing/`, `files/`, `auth/`, `ui/`) se crean en sus funcionalidades. Los tests van en `tests/` y prueban solo lo que exporta `src/content/index.ts` o, en los scripts, su línea de comandos.
 
 ## Orden sugerido de implementación
 

@@ -9,7 +9,7 @@ description: "Lista de tareas de la funcionalidad 001: contenido y base de datos
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/content-module.md, quickstart.md
 
-**Tests**: obligatorios por la constitución (principio IV). Cada escenario de aceptación y cada FR tiene al menos un test. Como una tarea solo se marca hecha con tests, lint y build en verde, **cada tarea incluye su implementación y sus tests**: primero se escribe el test, se ve fallar y después se implementa. Los tests usan solo lo que exporta `src/content/index.ts`, sin leer ni escribir tablas directamente. Cada test nombra su escenario o requisito, por ejemplo `US2-4 rejects an order that omits a project` o `FR-021 ...`.
+**Tests**: obligatorios por la constitución (principio IV). Cada escenario de aceptación y cada FR tiene al menos un test. Como una tarea solo se marca hecha con tests, lint y build en verde, **cada tarea incluye su implementación y sus tests**: primero se escribe el test, se ve fallar y después se implementa. Los tests usan solo lo que exporta `src/content/index.ts` (o, en los scripts, su línea de comandos), sin leer ni escribir tablas directamente. Cada test nombra su escenario o requisito, por ejemplo `US2-4 rejects an order that omits a project` o `FR-021 ...`.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -167,7 +167,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US1-6**: `experience`, `skillCategories` y `projects` llegan como `[]` y el resto completo (FR-004).
     - `headline` es `null` con la semilla.
 
-**Checkpoint**: MVP. El build de las funcionalidades 4 y 6 ya puede leer el contenido sembrado.
+**Checkpoint**: MVP. El build del sitio (funcionalidad 6) ya puede leer el contenido sembrado.
 
 ---
 
@@ -288,7 +288,8 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **US6-2**: recargar sin un proyecto y con un logro cambiado refleja el archivo nuevo, sin duplicados ni restos.
     - **US6-3** y **FR-028**: un puesto sin tecnologías y un proyecto con enlace `http://` se rechazan con un `issue` por cada uno (`experience.0.technologies`, `projects.1.demoUrl`) y el contenido no cambia.
     - **US6-4**: perfil, valores y contacto no cambian tras una carga.
-    - **SC-008**: cargar el mismo archivo dos veces da el mismo `getEditableContent` que una vez.
+    - **SC-008**: cargar el mismo archivo dos veces da el mismo `getEditableContent` que una vez, comparado sin los `id` (cada carga inserta filas nuevas).
+    - **FR-027**: una carga con `projects: []` deja los proyectos vacíos; un archivo sin la clave `projects` se rechaza (`field: "projects"`, `code: "required"`).
     - **FR-023**: una carga correcta avanza `getContentLastModified`; una rechazada no.
 - [ ] T024 [US6] Crear `scripts/content-import.ts` y la plantilla `scripts/portfolio.example.json`:
   1. leer la ruta del primer argumento y `DATABASE_URL`; salir con un mensaje claro si falta alguno;
@@ -298,6 +299,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   5. cerrar el `Pool` (`db.$client.end()`).
   - Añadir a `package.json` `"content:import": "tsx --env-file=.env.local scripts/content-import.ts"`.
   - `portfolio.example.json` usa datos ficticios evidentes («Test Company», «Test Project») y pasa la validación: un test en `tests/content/import.test.ts` lo carga con `importContent`.
+  - Tests en `tests/scripts/content-import.test.ts`, que lanzan el script con `tsx` en un proceso hijo y una `DATABASE_URL` ficticia: **US6-5**, una ruta que no existe y un archivo que no es JSON salen con código distinto de 0 y un mensaje con el motivo, sin conectar a la base.
 
 **Checkpoint**: las seis historias completas; el sitio de la entrega 1 tiene todo su contenido.
 
@@ -411,7 +413,7 @@ Task: "T016 [US3] skills.ts + tests/content/skills.test.ts"
 | FR-017 | T013–T018 |
 | FR-018 | T009, T013, T015, T016, T017 |
 | FR-019, FR-020, FR-021, FR-022 | T008, T013, T015, T017, T018, T019 |
-| FR-023 | T009, T013, T019 |
+| FR-023 | T009, T013, T019, T023 |
 | FR-024 | T006, T010 |
 | FR-025, FR-026 | T010, T017 |
 | FR-027, FR-028 | T023, T024 |

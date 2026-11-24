@@ -23,7 +23,7 @@ Alcance: backend
 Actores:
 
 - **Administrador**: Sharlton, único usuario que modifica el contenido. En esta funcionalidad se definen las operaciones de contenido; la protección con login llega en la funcionalidad 2 y las pantallas del panel en la 7.
-- **Generación del sitio**: el proceso que construye el sitio público y pide el contenido publicado de cada idioma (se usa en las funcionalidades 4 y 6).
+- **Generación del sitio**: el proceso que construye el sitio público y pide el contenido publicado de cada idioma (lo construye la funcionalidad 6 y lo dispara la 4).
 
 ### User Story 1 - Contenido publicado por idioma (Priority: P1)
 
@@ -205,8 +205,8 @@ Mientras no exista el panel (entrega 1, 2026-11-27), Sharlton escribe su experie
 
 **Carga desde archivo**
 
-- **FR-027**: Un comando MUST cargar experiencia, categorías con sus habilidades y proyectos desde un archivo local, sustituyendo por completo esas tres listas por las del archivo y en su orden. Un proyecto sin estado en el archivo queda en borrador (FR-015). El perfil, los valores y el contacto no se tocan.
-- **FR-028**: La carga MUST aplicar las mismas validaciones que las operaciones de escritura (FR-009 a FR-022) y ser atómica: si algún elemento es inválido, se rechaza todo indicando cada elemento y campo, y no se guarda nada. Una carga correcta deja constancia de la última modificación (FR-023).
+- **FR-027**: Un comando MUST cargar experiencia, categorías con sus habilidades y proyectos desde un archivo local, sustituyendo por completo esas tres listas por las del archivo y en su orden. Un proyecto sin estado en el archivo queda en borrador (FR-015). El perfil, los valores y el contacto no se tocan. El archivo MUST traer las tres listas; una lista vacía deja esa sección vacía.
+- **FR-028**: La carga MUST aplicar las mismas validaciones que las operaciones de escritura (FR-009 a FR-015 y FR-019 a FR-022) y ser atómica: si algún elemento es inválido, se rechaza todo indicando cada elemento y campo, y no se guarda nada. Una carga correcta deja constancia de la última modificación (FR-023).
 
 ### Key Entities *(include if feature involves data)*
 
@@ -231,7 +231,7 @@ Mientras no exista el panel (entrega 1, 2026-11-27), Sharlton escribe su experie
 - **SC-005**: Ejecutar la semilla dos veces seguidas deja exactamente el mismo contenido que ejecutarla una vez.
 - **SC-006**: Con 50 elementos de contenido, obtener todo el contenido publicado de un idioma tarda menos de 2 segundos.
 - **SC-007**: Crear un entorno nuevo con la estructura de datos y el contenido inicial requiere un solo comando documentado.
-- **SC-008**: Cargar el mismo archivo dos veces seguidas deja exactamente el mismo contenido que cargarlo una vez.
+- **SC-008**: Cargar el mismo archivo dos veces seguidas deja exactamente el mismo contenido que cargarlo una vez, salvo los identificadores internos, que cambian en cada carga.
 
 ## Assumptions
 

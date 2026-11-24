@@ -62,7 +62,7 @@ Fuera de esta funcionalidad: Tailwind, Preact, Better Auth, Vercel Blob, Resend,
 
 **Rationale**: no hay interfaz ni capa de repositorio con una sola implementación (principio V). Los tests pasan una base PGlite y las Astro Actions de la funcionalidad 7 pasarán `getDb()`.
 
-**Alternatives considered**: una clase de servicio o un patrón repositorio (añaden una capa sin segunda implementación), y las Astro Actions directamente (aún no hay panel ni login; la spec pide que esto solo se use desde tests y la semilla).
+**Alternatives considered**: una clase de servicio o un patrón repositorio (añaden una capa sin segunda implementación), y las Astro Actions directamente (aún no hay panel ni login; la spec pide que esto solo se use desde tests, la semilla y la carga desde archivo).
 
 ## 5. Validación
 

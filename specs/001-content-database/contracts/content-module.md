@@ -1,6 +1,6 @@
 # Contrato: módulo `src/content`
 
-Superficie pública que exporta `src/content/index.ts`. Ningún otro módulo importa archivos internos de `src/content/`. No hay endpoints HTTP en esta funcionalidad: las escrituras se exponen en la funcionalidad 7 como Astro Actions protegidas por la 2. El build (funcionalidades 4 y 6) solo usa la lectura publicada.
+Superficie pública que exporta `src/content/index.ts`. Ningún otro módulo importa archivos internos de `src/content/`. No hay endpoints HTTP en esta funcionalidad: las escrituras se exponen en la funcionalidad 7 como Astro Actions protegidas por la 2. El build del sitio (funcionalidad 6) solo usa la lectura publicada.
 
 Las firmas son TypeScript. Los tipos de entrada se infieren de los esquemas Zod del módulo, que también se exportan.
 
@@ -110,7 +110,7 @@ Inserta el contenido aprobado solo si el perfil no existe (`applied: true`). Si 
 
 ### `importContent(db, input): Promise<{ experience: number; skillCategories: number; skills: number; projects: number }>`
 
-Sustituye por completo experiencia, categorías con sus habilidades y proyectos por los de `input`, en su orden (FR-027, FR-028). Devuelve cuántos elementos quedaron de cada tipo.
+Sustituye por completo experiencia, categorías con sus habilidades y proyectos por los de `input`, en su orden (FR-027, FR-028). Devuelve cuántos elementos quedaron de cada tipo. Las tres claves son obligatorias; una lista `[]` deja vacía esa sección.
 
 ```ts
 type ImportInput = {
@@ -122,7 +122,7 @@ type ImportInput = {
 
 1. Valida la entrada completa (`z.strictObject`) con los mismos esquemas que las funciones de escritura. Las rutas de `field` llevan el prefijo del elemento: `experience.0.technologies`, `skillCategories.1.skills.2`, `projects.2.demoUrl`. Un nombre de habilidad repetido sin distinguir mayúsculas dentro de una categoría da `duplicate`. Si algo falla, lanza `ContentValidationError` con todos los problemas.
 2. En una sola transacción: borra habilidades, categorías, experiencia y proyectos; inserta los del archivo con `position` 0 a n − 1 (las habilidades, por categoría); un proyecto sin `status` queda `draft`; actualiza `content_state.updated_at`.
-3. No toca `profile`, `profile_value` ni `contact`. Si algo falla, no deja nada aplicado.
+3. No toca `profile`, `profile_values` ni `contact`. Si algo falla, no deja nada aplicado.
 
 ## Errores
 
