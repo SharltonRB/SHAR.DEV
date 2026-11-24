@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   ContentValidationError,
+  createExperience,
   createProject,
+  createSkill,
+  createSkillCategory,
   type Database,
   getPublishedContent,
   reorderProjects,
@@ -153,5 +156,42 @@ describe("getPublishedContent (US1)", () => {
     await expect(getPublishedContent(db, "es")).resolves.toMatchObject({
       profile: { headline: null },
     });
+  });
+
+  it("SC-006 returns 50 elements in under 2 seconds", async () => {
+    for (let i = 0; i < 20; i++) {
+      const { id } = await createProject(db, {
+        title: { en: `Test Project ${i}` },
+        description: { en: "Test description." },
+        technologies: ["Java"],
+      });
+      await setProjectStatus(db, id, "published");
+    }
+    for (let i = 0; i < 15; i++) {
+      await createExperience(db, {
+        company: `Test Company ${i}`,
+        role: { en: "Test Engineer" },
+        startMonth: "2023-01",
+        endMonth: "2024-01",
+        location: { en: "Remote" },
+        achievements: [{ en: "Did a test thing." }],
+        technologies: ["Java"],
+      });
+    }
+    const category = await createSkillCategory(db, {
+      name: { en: "Test Category" },
+    });
+    for (let i = 0; i < 15; i++) {
+      await createSkill(db, category.id, { name: `Test Skill ${i}` });
+    }
+
+    const start = performance.now();
+    const content = await getPublishedContent(db, "es");
+    const elapsed = performance.now() - start;
+
+    expect(content.projects).toHaveLength(20);
+    expect(content.experience).toHaveLength(15);
+    expect(content.skillCategories[0]?.skills).toHaveLength(15);
+    expect(elapsed).toBeLessThan(2000);
   });
 });
