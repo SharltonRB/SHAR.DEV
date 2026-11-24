@@ -1,3 +1,4 @@
+export { type ContactInput, updateContact } from "./contact";
 export { createDb, type Database, getDb } from "./db";
 export {
   type ContentEntity,
@@ -14,6 +15,15 @@ export {
   updateExperience,
 } from "./experience";
 export type { Locale } from "./locale";
+export {
+  createValue,
+  deleteValue,
+  type ProfileInput,
+  reorderValues,
+  updateProfile,
+  updateValue,
+  type ValueInput,
+} from "./profile";
 export {
   createProject,
   deleteProject,

@@ -253,7 +253,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Independent Test**: editar cada campo y verificar el cambio en el contenido publicado del idioma correspondiente.
 
-- [ ] T017 [US4] Implementar en `src/content/profile.ts` `updateProfile`, `createValue`, `updateValue`, `deleteValue` y `reorderValues`:
+- [X] T017 [US4] Implementar en `src/content/profile.ts` `updateProfile`, `createValue`, `updateValue`, `deleteValue` y `reorderValues`:
   - **Perfil** (reemplazo completo): `name` «Sin traducción. Máx. 80»; `title` y `slogan` bilingües con «EN obligatorio, máx. 80»; `headline` «**Opcional** en ambos idiomas. Máx. 120»; `summary`, `mission` y `vision` bilingües con «EN obligatorio, máx. 1200».
   - **Valor**: `title` con «EN obligatorio, máx. 80» y `description` con «EN obligatorio, máx. 200».
   - **Límites**: «entre 1 y 6 filas». `createValue` rechaza el 7.º (`too_many`) y `deleteValue` rechaza borrar el último (`too_few`), los dos comprobados en la transacción.
@@ -266,7 +266,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **FR-018**: un valor nuevo va al final.
     - **FR-007**: el titular vacío se acepta y llega `null`; con texto, llega en su idioma; solo en español se rechaza (`field: "headline.en"`, `code: "required"`).
     - **US5-2** con la operación real: tras `updateProfile`, `seedContent` no pisa la edición.
-- [ ] T018 [US4] Implementar `updateContact` en `src/content/contact.ts`:
+- [X] T018 [US4] Implementar `updateContact` en `src/content/contact.ts`:
   - **Entrada**: `email` «Correo válido»; `whatsapp` `^\+\d{8,15}$`; `linkedinUrl` y `githubUrl` opcionales, «`https` válida».
   - Transacción con `touchContentState`.
   - Exportar en `src/content/index.ts`.
