@@ -140,3 +140,7 @@ Los `code` son estables (por ejemplo `required`, `too_long`, `duplicate`, `not_e
 **Rationale**: gratis en un repositorio público (S22 de la decisión 0002) y con las herramientas mínimas.
 
 **Alternatives considered**: ESLint con Prettier (más paquetes y configuración); en esta funcionalidad casi no hay archivos `.astro`.
+
+## 12. Medición en Neon (SC-006, T022)
+
+El 2026-11-23, contra Neon Free (`shar-dev`, AWS us-east-1) con la semilla y la plantilla de ejemplo cargadas, `getPublishedContent(db, "es")` tardó 1662 ms en la primera llamada (incluye abrir la conexión WebSocket) y 828 ms en la segunda, medido desde Costa Rica. Las dos quedan bajo los 2 s. El cómputo ya estaba activo por `db:setup`, así que el arranque en frío tras la suspensión (unos 5 min sin uso) no está incluido: queda por medir en el primer build de Vercel, que corre en `iad1`, más cerca de la base.

@@ -328,12 +328,13 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   - sustituir «Aún no hay código…» por los comandos de `quickstart.md` (`pnpm install`, `dev`, `lint`, `format`, `typecheck`, `test`, `build`, `db:generate`, `db:setup`, `content:import <ruta.json>`);
   - añadir la nota de que los tests usan PGlite y no necesitan `DATABASE_URL`;
   - añadir que `.env.local` lleva `DATABASE_URL`.
-- [ ] T022 Validar `quickstart.md` de principio a fin:
+- [X] T022 Validar `quickstart.md` de principio a fin:
   - **Escenario A**: todo en verde y sin desvío en `drizzle/`.
   - **Escenario B**: `pnpm db:setup` dos veces contra una rama vacía de Neon Free. **Requiere que Sharlton cree el proyecto de Neon y ponga `DATABASE_URL` en `.env.local`.** Hasta entonces, la tarea queda abierta y se informa.
   - **Escenario E**: `pnpm content:import` dos veces con el archivo real de Sharlton contra Neon (**SC-008**). Si aún no lo entregó, se prueba con `scripts/portfolio.example.json` y se informa.
   - **SC-006** contra Neon: medir `getPublishedContent` con la semilla, incluido el primer acceso tras el arranque en frío del cómputo, y anotar el tiempo en `research.md`.
   - Comprobar en GitHub Actions que el CI pasa en `main`.
+  - Nota (2026-11-23): A, B y E correctos en Neon `main`. E se hizo con la plantilla, así que Neon tiene datos de prueba hasta que Sharlton cargue su archivo. SC-006 da 1662 ms y 828 ms, sin el arranque en frío (ver research.md §12).
 
 ---
 
