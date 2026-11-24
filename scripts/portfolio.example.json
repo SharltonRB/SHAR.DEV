@@ -1,0 +1,56 @@
+{
+  "experience": [
+    {
+      "company": "Test Company",
+      "role": {
+        "en": "Test Backend Engineer",
+        "es": "Ingeniero Backend de prueba"
+      },
+      "startMonth": "2024-01",
+      "endMonth": null,
+      "location": { "en": "Remote", "es": "Remoto" },
+      "achievements": [
+        { "en": "Test achievement one.", "es": "Logro de prueba uno." },
+        { "en": "Test achievement two." }
+      ],
+      "technologies": ["Java", "Spring Boot"]
+    },
+    {
+      "company": "Test Company Two",
+      "role": { "en": "Test Intern", "es": "Practicante de prueba" },
+      "startMonth": "2022-06",
+      "endMonth": "2023-12",
+      "location": { "en": "Test City", "es": "Ciudad de prueba" },
+      "achievements": [{ "en": "Test achievement.", "es": "Logro de prueba." }],
+      "technologies": ["SQL"]
+    }
+  ],
+  "skillCategories": [
+    {
+      "name": { "en": "Test Backend", "es": "Backend de prueba" },
+      "skills": ["Test Skill A", "Test Skill B"]
+    },
+    {
+      "name": { "en": "Test Tools", "es": "Herramientas de prueba" },
+      "skills": ["Test Skill C"]
+    }
+  ],
+  "projects": [
+    {
+      "title": { "en": "Test Project", "es": "Proyecto de prueba" },
+      "description": {
+        "en": "A test project shown on the site.",
+        "es": "Un proyecto de prueba que se muestra en el sitio."
+      },
+      "technologies": ["Java"],
+      "demoUrl": "https://example.com",
+      "codeUrl": "https://github.com/example/test-project",
+      "status": "published"
+    },
+    {
+      "title": { "en": "Test Draft Project" },
+      "description": { "en": "A test project without status stays a draft." },
+      "technologies": ["Java"]
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   type Database,
@@ -82,6 +83,22 @@ function withoutIds(value: unknown): unknown {
 }
 
 describe("importContent (US6)", () => {
+  it("the example template scripts/portfolio.example.json is valid", async () => {
+    const template = JSON.parse(
+      readFileSync(
+        new URL("../../scripts/portfolio.example.json", import.meta.url),
+        "utf8",
+      ),
+    );
+
+    await expect(importContent(db, template)).resolves.toEqual({
+      experience: 2,
+      skillCategories: 2,
+      skills: 3,
+      projects: 2,
+    });
+  });
+
   it("US6-1 loads the file in its order; a project without status is a draft", async () => {
     await expect(importContent(db, testFile())).resolves.toEqual({
       experience: 2,

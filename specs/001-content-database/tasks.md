@@ -296,7 +296,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - **SC-008**: cargar el mismo archivo dos veces da el mismo `getEditableContent` que una vez, comparado sin los `id` (cada carga inserta filas nuevas).
     - **FR-027**: una carga con `projects: []` deja los proyectos vacíos; un archivo sin la clave `projects` se rechaza (`field: "projects"`, `code: "required"`).
     - **FR-023**: una carga correcta avanza `getContentLastModified`; una rechazada no.
-- [ ] T024 [US6] Crear `scripts/content-import.ts` y la plantilla `scripts/portfolio.example.json`:
+- [X] T024 [US6] Crear `scripts/content-import.ts` y la plantilla `scripts/portfolio.example.json`:
   1. leer la ruta del primer argumento y `DATABASE_URL`; salir con un mensaje claro si falta alguno;
   2. leer y parsear el JSON; si el archivo no existe, no se puede leer o no es JSON válido, informar el motivo y salir sin tocar la base (**US6-5**);
   3. `createDb(url)` y `importContent`; imprimir los conteos devueltos;
