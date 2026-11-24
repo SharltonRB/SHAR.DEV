@@ -31,7 +31,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 - [X] T001 Crear `package.json` en la raíz:
   - Campos: `"name": "shar-dev"`, `"private": true`, `"type": "module"`, `"packageManager": "pnpm@11.28.10"`, `"engines": { "node": ">=24" }`.
-  - Scripts: `dev` (`astro dev`), `build` (`astro build`), `preview` (`astro preview`), `lint` (`biome check .`), `format` (`biome format --write .`), `typecheck` (`astro check`), `test` (`vitest run`), `db:generate` (`drizzle-kit generate`), `db:setup` (`tsx --env-file=.env.local scripts/db-setup.ts`).
+  - Scripts: `dev` (`astro dev`), `build` (`astro build`), `preview` (`astro preview`), `lint` (`biome check .`), `format` (`biome format --write .`), `typecheck` (`astro check`), `test` (`vitest run`), `db:generate` (`drizzle-kit generate`), `db:setup` (`tsx --env-file-if-exists=.env.local scripts/db-setup.ts`).
   - Instalar con `pnpm add -E` estas versiones exactas: `astro@7.4.4`, `@astrojs/vercel@11.0.17`, `drizzle-orm@0.45.4`, `@neondatabase/serverless@1.2.0`, `zod@4.6.7`.
   - Instalar con `pnpm add -D -E`: `typescript@6.0.3`, `@astrojs/check@0.9.12`, `drizzle-kit@0.31.11`, `@electric-sql/pglite@0.5.13`, `vitest@4.1.12`, `@biomejs/biome@2.6.4`, `tsx@4.23.15`, `@types/node@26.6.6`.
   - Subir `pnpm-lock.yaml`. Crear `.env.example` con una sola línea, `DATABASE_URL=`. `.gitignore` ya ignora `.env.*` salvo `.env.example`.
@@ -198,10 +198,11 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - Editar o borrar un ID inexistente da `ContentNotFoundError` sin efectos.
     - **FR-023**: `getContentLastModified` avanza tras una escritura correcta y no cambia tras una rechazada.
   - Nota: `projectInputSchema` y `toProjectColumns` se exportan desde `projects.ts` para T023. `setProjectStatus` rechaza un estado desconocido con `field: "status"`, `code: "required"`. Utilidades de test en `tests/helpers/content.ts` (`rejectedFields`, `tick`).
-- [ ] T014 [US2] Probar los proyectos en las dos lecturas, `getPublishedContent` (T012) y `getEditableContent` (T010). Si un test falla, se corrige en `src/content/published.ts`.
+- [X] T014 [US2] Probar los proyectos en las dos lecturas, `getPublishedContent` (T012) y `getEditableContent` (T010). Si un test falla, se corrige en `src/content/published.ts`.
   - Tests:
     - En `tests/content/published.test.ts`: **US1-3**, un proyecto publicado solo con texto en inglés aparece en `es` con título y descripción en inglés; **US1-4** y **SC-003**, con dos publicados y un borrador solo aparecen los dos publicados, en el orden definido, en los dos idiomas.
     - En `tests/content/projects.test.ts`: `getEditableContent` devuelve el borrador con su `status` y los dos idiomas.
+  - Nota: por la revisión de T011–T012 se añadió el respaldo a inglés del texto alternativo de la imagen, se endureció el test de US1-5 y `db:setup` pasó a `--env-file-if-exists` (corre sin `.env.local`, como en CI o Vercel). El respaldo de los logros se prueba en T015. No hizo falta corregir `published.ts`.
 
 **Checkpoint**: US1 y US2 completas; los proyectos se gestionan y se publican.
 
@@ -301,7 +302,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
   3. `createDb(url)` y `importContent`; imprimir los conteos devueltos;
   4. ante `ContentValidationError`, imprimir cada `field` con su `code` y salir con código distinto de 0;
   5. cerrar el `Pool` (`db.$client.end()`).
-  - Añadir a `package.json` `"content:import": "tsx --env-file=.env.local scripts/content-import.ts"`.
+  - Añadir a `package.json` `"content:import": "tsx --env-file-if-exists=.env.local scripts/content-import.ts"`.
   - `portfolio.example.json` usa datos ficticios evidentes («Test Company», «Test Project») y pasa la validación: un test en `tests/content/import.test.ts` lo carga con `importContent`.
   - Tests en `tests/scripts/content-import.test.ts`, que lanzan el script con `tsx` en un proceso hijo y una `DATABASE_URL` ficticia: **US6-5**, una ruta que no existe y un archivo que no es JSON salen con código distinto de 0 y un mensaje con el motivo, sin conectar a la base.
 

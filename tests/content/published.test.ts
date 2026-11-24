@@ -1,9 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   ContentValidationError,
+  createProject,
   type Database,
   getPublishedContent,
+  reorderProjects,
   seedContent,
+  setProjectStatus,
 } from "../../src/content";
 import {
   SEED_CONTACT,
@@ -68,8 +71,8 @@ describe("getPublishedContent (US1)", () => {
     expect(error.issues).toEqual([
       expect.objectContaining({ field: "locale", code: "unsupported_locale" }),
     ]);
-    expect(error.issues[0].message).toMatch(/en/);
-    expect(error.issues[0].message).toMatch(/es/);
+    expect(error.issues[0].message).toMatch(/\ben\b/);
+    expect(error.issues[0].message).toMatch(/\bes\b/);
   });
 
   it("US1-6 FR-004 returns empty sections as [] and the rest complete", async () => {
@@ -82,6 +85,65 @@ describe("getPublishedContent (US1)", () => {
       expect(content.values).toHaveLength(4);
       expect(content.profile.summary).not.toBe("");
     }
+  });
+
+  it("US1-3 a published project with English text only appears in English under es", async () => {
+    const { id } = await createProject(db, {
+      title: { en: "Test Project", es: "  " },
+      description: { en: "English only." },
+      technologies: ["Java"],
+    });
+    await setProjectStatus(db, id, "published");
+
+    const [project] = (await getPublishedContent(db, "es")).projects;
+    expect(project).toMatchObject({
+      title: "Test Project",
+      description: "English only.",
+    });
+  });
+
+  it("FR-002 an image alt text without Spanish falls back to English", async () => {
+    const { id } = await createProject(db, {
+      title: { en: "Test Project" },
+      description: { en: "Description." },
+      technologies: ["Java"],
+      imageUrl: "https://example.com/test.png",
+      imageAlt: { en: "Test screenshot" },
+    });
+    await setProjectStatus(db, id, "published");
+
+    const [project] = (await getPublishedContent(db, "es")).projects;
+    expect(project?.image).toEqual({
+      url: "https://example.com/test.png",
+      alt: "Test screenshot",
+    });
+  });
+
+  it("US1-4 SC-003 only published projects appear, in the defined order", async () => {
+    const ids = [];
+    for (const name of ["A", "B", "C"]) {
+      const { id } = await createProject(db, {
+        title: { en: `Test Project ${name}`, es: `Proyecto de prueba ${name}` },
+        description: { en: "Description." },
+        technologies: ["Java"],
+      });
+      ids.push(id);
+    }
+    const [a, b, c] = ids as [number, number, number];
+    await reorderProjects(db, [c, b, a]);
+    await setProjectStatus(db, a, "published");
+    await setProjectStatus(db, c, "published");
+
+    const en = await getPublishedContent(db, "en");
+    const es = await getPublishedContent(db, "es");
+    expect(en.projects.map((p) => p.title)).toEqual([
+      "Test Project C",
+      "Test Project A",
+    ]);
+    expect(es.projects.map((p) => p.title)).toEqual([
+      "Proyecto de prueba C",
+      "Proyecto de prueba A",
+    ]);
   });
 
   it("FR-007 returns the headline as null when it has no text", async () => {
