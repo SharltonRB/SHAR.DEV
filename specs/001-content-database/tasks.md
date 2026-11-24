@@ -180,7 +180,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Independent Test**: crear, editar, reordenar, publicar y borrar proyectos mediante las operaciones de contenido y verificar el resultado en el contenido publicado.
 
-- [ ] T013 [US2] Implementar en `src/content/projects.ts` `createProject`, `updateProject`, `setProjectStatus`, `deleteProject` y `reorderProjects`, con las firmas de `contracts/content-module.md`:
+- [X] T013 [US2] Implementar en `src/content/projects.ts` `createProject`, `updateProject`, `setProjectStatus`, `deleteProject` y `reorderProjects`, con las firmas de `contracts/content-module.md`:
   - **Entrada**: `title` bilingüe con «EN obligatorio, máx. 80»; `description` bilingüe con «EN obligatorio, máx. 300»; `technologies` «Al menos 1; cada una no vacía, máx. 80»; `demoUrl`, `codeUrl` e `imageUrl` opcionales, «`https` válida»; `imageAlt` bilingüe opcional con «Máx. 150. Obligatorio en EN si hay `image_url`» (si falta, `field: "imageAlt.en"`, `code: "required"`).
   - **Creación**: siempre `status = 'draft'` y `position = nextPosition`. Actualizar no cambia `status`.
   - **Escritura**: en una transacción con `touchContentState`. `ContentNotFoundError` (`entity: "project"`) si el `id` no existe. `reorderProjects` incluye los borradores.
@@ -197,6 +197,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - Un proyecto sin demo ni código es válido y llega con `demoUrl` y `codeUrl` en `null`.
     - Editar o borrar un ID inexistente da `ContentNotFoundError` sin efectos.
     - **FR-023**: `getContentLastModified` avanza tras una escritura correcta y no cambia tras una rechazada.
+  - Nota: `projectInputSchema` y `toProjectColumns` se exportan desde `projects.ts` para T023. `setProjectStatus` rechaza un estado desconocido con `field: "status"`, `code: "required"`. Utilidades de test en `tests/helpers/content.ts` (`rejectedFields`, `tick`).
 - [ ] T014 [US2] Probar los proyectos en las dos lecturas, `getPublishedContent` (T012) y `getEditableContent` (T010). Si un test falla, se corrige en `src/content/published.ts`.
   - Tests:
     - En `tests/content/published.test.ts`: **US1-3**, un proyecto publicado solo con texto en inglés aparece en `es` con título y descripción en inglés; **US1-4** y **SC-003**, con dos publicados y un borrador solo aparecen los dos publicados, en el orden definido, en los dos idiomas.

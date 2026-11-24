@@ -8,6 +8,15 @@ export {
 } from "./errors";
 export type { Locale } from "./locale";
 export {
+  createProject,
+  deleteProject,
+  type ProjectInput,
+  type ProjectStatus,
+  reorderProjects,
+  setProjectStatus,
+  updateProject,
+} from "./projects";
+export {
   type BilingualText,
   type EditableContact,
   type EditableContent,
