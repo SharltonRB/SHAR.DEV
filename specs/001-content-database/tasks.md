@@ -314,7 +314,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Purpose**: requisitos transversales, rendimiento, documentación y validación real.
 
-- [ ] T019 Tests transversales en `tests/content/validation.test.ts`, usando las operaciones públicas:
+- [X] T019 Tests transversales en `tests/content/validation.test.ts`, usando las operaciones públicas:
   - **FR-019** y **SC-004**: una entrada con varios campos inválidos devuelve un `issue` por cada uno y no guarda nada.
   - **FR-021**: tabla de casos en el límite y en límite + 1 para titular 120, eslogan 80, títulos 80, descripción de proyecto 300, logro 200, perfil, misión y visión 1200, descripción de valor 200 y texto alternativo 150. Un texto de emojis cuenta un carácter por emoji.
   - **FR-022**: tildes, ñ, comillas, `<script>alert(1)</script>` y emoji se guardan y vuelven idénticos.
