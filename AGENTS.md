@@ -30,7 +30,24 @@ Al instalar, fija versiones exactas con al menos dos semanas de antigüedad. Ant
 
 ## Comandos
 
-Aún no hay código. Los comandos de instalación, desarrollo, tests, lint y build se definen en la funcionalidad 1 y se anotan aquí.
+Node 24 y pnpm 11.28.10 (fijado en `packageManager`).
+
+```bash
+pnpm install
+pnpm dev                          # servidor de desarrollo de Astro
+pnpm lint                         # Biome
+pnpm format                       # Biome, escribe el formato
+pnpm typecheck                    # astro check
+pnpm test                         # Vitest + PGlite
+pnpm build                        # astro build con @astrojs/vercel
+pnpm db:generate                  # genera SQL en drizzle/ tras cambiar src/content/schema.ts
+pnpm db:setup                     # migraciones + semilla contra DATABASE_URL; se puede repetir
+pnpm content:import <ruta.json>   # sustituye experiencia, habilidades y proyectos
+```
+
+- Los tests usan PGlite en memoria con las migraciones de `drizzle/` y no necesitan `DATABASE_URL` ni red.
+- `.env.local` (fuera de git) lleva `DATABASE_URL`, la cadena de conexión de Neon, para `db:setup`, `content:import` y `drizzle-kit`. `.env.example` muestra el nombre.
+- Plantilla del archivo de contenido: `scripts/portfolio.example.json`.
 
 ## Estructura y reglas de dependencia
 

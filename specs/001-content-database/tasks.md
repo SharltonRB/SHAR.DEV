@@ -324,7 +324,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
   Si algún test falla por un hueco de la implementación, se corrige en el archivo del módulo afectado.
 - [X] T020 **SC-006**: añadir a `tests/content/published.test.ts` un test que siembra 50 elementos (proyectos, puestos y habilidades) con las operaciones públicas y comprueba que `getPublishedContent` responde en menos de 2 s.
-- [ ] T021 [P] Actualizar la sección «Comandos» de `AGENTS.md`:
+- [X] T021 [P] Actualizar la sección «Comandos» de `AGENTS.md`:
   - sustituir «Aún no hay código…» por los comandos de `quickstart.md` (`pnpm install`, `dev`, `lint`, `format`, `typecheck`, `test`, `build`, `db:generate`, `db:setup`, `content:import <ruta.json>`);
   - añadir la nota de que los tests usan PGlite y no necesitan `DATABASE_URL`;
   - añadir que `.env.local` lleva `DATABASE_URL`.
