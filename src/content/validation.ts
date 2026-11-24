@@ -202,7 +202,9 @@ function toIssues(issue: z.core.$ZodIssue): ContentIssue[] {
         message: "Unknown field.",
       }));
     case "invalid_type":
-      // A missing value or one of the wrong type: the field has no usable value.
+    case "invalid_value":
+      // A missing value, one of the wrong type or outside an enum: the
+      // field has no usable value.
       return [{ field, code: "required", message: issue.message }];
     case "too_small":
       if (issue.origin === "array") {

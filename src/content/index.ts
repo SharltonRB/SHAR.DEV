@@ -14,6 +14,7 @@ export {
   reorderExperience,
   updateExperience,
 } from "./experience";
+export { type ImportInput, type ImportResult, importContent } from "./import";
 export type { Locale } from "./locale";
 export {
   createValue,

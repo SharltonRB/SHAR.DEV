@@ -284,7 +284,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Independent Test**: sobre una base con la semilla, cargar un archivo de ejemplo, editarlo, volver a cargarlo y comprobar el contenido resultante.
 
-- [ ] T023 [US6] Implementar `importContent(db, input)` en `src/content/import.ts`, como en `contracts/content-module.md` («Carga desde archivo»):
+- [X] T023 [US6] Implementar `importContent(db, input)` en `src/content/import.ts`, como en `contracts/content-module.md` («Carga desde archivo»):
   - **Entrada**: `z.strictObject` con `experience`, `skillCategories` y `projects`, reutilizando los esquemas de entrada de T013, T015 y T016 (exportarlos desde esos archivos solo para el módulo, no en `src/content/index.ts`). `status` de proyecto opcional, `draft` por defecto. Las rutas de `field` llevan el prefijo del elemento (`projects.2.demoUrl`). Habilidad repetida sin distinguir mayúsculas en una categoría: `duplicate`.
   - **Escritura**: una sola transacción que borra habilidades, categorías, experiencia y proyectos, inserta lo nuevo con `position` 0 a n − 1 y llama a `touchContentState`. No toca perfil, valores ni contacto.
   - Exportar `importContent` y el tipo `ImportInput` en `src/content/index.ts`.

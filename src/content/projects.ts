@@ -18,27 +18,43 @@ export const PROJECT_STATUSES = ["draft", "published"] as const;
 
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
 
+const projectFields = {
+  title: bilingualText(TEXT_LIMITS.title),
+  description: bilingualText(TEXT_LIMITS.projectDescription),
+  technologies: technologies(),
+  demoUrl: optionalHttpsUrl(),
+  codeUrl: optionalHttpsUrl(),
+  imageUrl: optionalHttpsUrl(),
+  imageAlt: optionalBilingualText(TEXT_LIMITS.imageAlt),
+};
+
+/** An image needs English alt text (FR-014). */
+function requireImageAlt(
+  value: { imageUrl: string | null; imageAlt: { en: string | null } },
+  ctx: z.RefinementCtx,
+): void {
+  if (value.imageUrl !== null && value.imageAlt.en === null) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["imageAlt", "en"],
+      message: "Required when the project has an image.",
+      params: { code: "required" },
+    });
+  }
+}
+
 /** Input of `createProject` and `updateProject` (FR-014). */
 export const projectInputSchema = z
+  .strictObject(projectFields)
+  .superRefine(requireImageAlt);
+
+/** A project in the import file: the same input plus a status, draft by default. */
+export const importedProjectSchema = z
   .strictObject({
-    title: bilingualText(TEXT_LIMITS.title),
-    description: bilingualText(TEXT_LIMITS.projectDescription),
-    technologies: technologies(),
-    demoUrl: optionalHttpsUrl(),
-    codeUrl: optionalHttpsUrl(),
-    imageUrl: optionalHttpsUrl(),
-    imageAlt: optionalBilingualText(TEXT_LIMITS.imageAlt),
+    ...projectFields,
+    status: z.enum(PROJECT_STATUSES).default("draft"),
   })
-  .superRefine((value, ctx) => {
-    if (value.imageUrl !== null && value.imageAlt.en === null) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["imageAlt", "en"],
-        message: "Required when the project has an image.",
-        params: { code: "required" },
-      });
-    }
-  });
+  .superRefine(requireImageAlt);
 
 export type ProjectInput = z.input<typeof projectInputSchema>;
 
