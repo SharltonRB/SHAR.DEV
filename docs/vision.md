@@ -1,7 +1,7 @@
 # Visión: SHAR.DEV — portafolio profesional
 
 Tipo: fullstack · Plataforma: web (escritorio y móvil, navegadores modernos)
-Fecha: 2026-11-13
+Fecha: 2026-11-13 · Actualizada: 2026-11-23 (entrega por etapas)
 
 ## Qué es y para quién
 
@@ -15,6 +15,8 @@ Resuelve dos problemas:
 Aplica la identidad visual SHAR.DEV, ya definida: estética pixel art / retro gaming, paleta 60-30-10 en modo claro y oscuro, Handjet y Space Grotesk. La fuente de verdad de la marca es la carpeta externa `SharDev - portafolio/identidad-visual/` (solo lectura; los archivos necesarios se copian al proyecto).
 
 ## Alcance de la primera versión
+
+Se entrega en dos etapas; qué entra en cada una está en «Plazo, presupuesto y despliegue».
 
 **Sitio público (una sola página con anclas)**
 
@@ -80,7 +82,9 @@ Aplica la identidad visual SHAR.DEV, ya definida: estética pixel art / retro ga
 
 ## Plazo, presupuesto y despliegue
 
-- Plazo: unas 3 semanas, con fecha objetivo **2026-12-04**.
+- Plazo: en dos entregas (cambio del 2026-11-23; sustituye la fecha objetivo 2026-12-04).
+  - **Entrega 1, 2026-11-27:** solo el sitio público estático, en EN y ES. El contenido se carga en Neon por script: la semilla y un archivo con experiencia, habilidades y proyectos que entrega Sharlton. El contacto es «Start Mission» (`mailto:`), el CV es un archivo fijo en `public/` y los proyectos van sin imagen. Sin formulario ni panel; cambiar el contenido exige editar el archivo, volver a cargarlo y redesplegar a mano.
+  - **Entrega 2, sin fecha:** panel de administración, formulario de contacto con bandeja, archivos en Vercel Blob (imágenes de proyectos; el CV pasa de `public/` a Blob) y publicación automática al guardar.
 - Presupuesto: $0 al mes.
 - Repositorio **público** en la cuenta personal de GitHub de Sharlton.
 - Frontend en Vercel, en un proyecto nuevo. Mientras tanto se usa la URL de preview; al lanzar, `shardev-portfolio.vercel.app` (la URL entregada en la tarea) pasa a este proyecto y la página en construcción queda archivada.
