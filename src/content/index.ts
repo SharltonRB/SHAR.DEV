@@ -40,4 +40,16 @@ export {
   type YearMonth,
 } from "./published";
 export { seedContent } from "./seed";
+export {
+  createSkill,
+  createSkillCategory,
+  deleteSkill,
+  deleteSkillCategory,
+  reorderSkillCategories,
+  reorderSkills,
+  type SkillCategoryInput,
+  type SkillInput,
+  updateSkill,
+  updateSkillCategory,
+} from "./skills";
 export { getContentLastModified } from "./state";

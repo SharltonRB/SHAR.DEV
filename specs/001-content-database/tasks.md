@@ -226,7 +226,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - Caso límite: un puesto actual y otro pasado se devuelven en el orden del administrador, no por fecha.
     - Reordenar con un ID ajeno se rechaza.
     - **FR-018**: un puesto nuevo va al final.
-- [ ] T016 [US3] Implementar en `src/content/skills.ts` `createSkillCategory`, `updateSkillCategory`, `deleteSkillCategory`, `reorderSkillCategories`, `createSkill(db, categoryId, input)`, `updateSkill`, `deleteSkill` y `reorderSkills(db, categoryId, ids)`:
+- [X] T016 [US3] Implementar en `src/content/skills.ts` `createSkillCategory`, `updateSkillCategory`, `deleteSkillCategory`, `reorderSkillCategories`, `createSkill(db, categoryId, input)`, `updateSkill`, `deleteSkill` y `reorderSkills(db, categoryId, ids)`:
   - **Entrada**: categoría `name` bilingüe con «EN obligatorio, máx. 80»; habilidad `name` «Sin traducción, máx. 80», sin ningún campo de nivel, porcentaje ni años.
   - **Reglas**:
     - borrar una categoría con habilidades se rechaza con `code: "not_empty"`;
