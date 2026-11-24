@@ -114,7 +114,7 @@ Los `code` son estables (por ejemplo `required`, `too_long`, `duplicate`, `not_e
 - `drizzle-kit generate` crea SQL versionado en `drizzle/`, que se sube al repositorio.
 - `pnpm db:setup` (`tsx --env-file=.env.local scripts/db-setup.ts`) aplica las migraciones con el migrador de `drizzle-orm/neon-serverless` y después ejecuta `seedContent(db)`. Es el único comando para un entorno nuevo (SC-007).
 - `seedContent` corre en una transacción: inserta el perfil con `ON CONFLICT DO NOTHING`. Si el perfil ya existía, no toca nada más. Si es nuevo, inserta los 4 valores, el contacto y `content_state` (FR-026, SC-005).
-- Los textos aprobados se copian **literalmente** de `identidad-visual/contenido/perfil-mision-vision-valores.md` a `src/content/seed-data.ts`. Cada valor se parte en título y descripción por la raya «—», sin cambiar mayúsculas (SC-001). El título profesional en español queda vacío y cae al inglés. LinkedIn, GitHub y el titular quedan vacíos.
+- Los textos aprobados se copian **literalmente** de `identidad-visual/contenido/perfil-mision-vision-valores.md` a `src/content/seed-data.ts`. Cada valor se parte en título y descripción por la raya «—», sin cambiar mayúsculas (SC-001). El título profesional en español queda vacío y cae al inglés. El titular queda vacío; LinkedIn y GitHub llevan las URL de FR-025.
 
 **Rationale**: la semilla nunca pisa ediciones (escenario 5.2) y no inventa contenido.
 

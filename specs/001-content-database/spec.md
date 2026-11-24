@@ -200,7 +200,7 @@ Mientras no exista el panel (entrega 1, 2026-11-27), Sharlton escribe su experie
 **Datos y entornos**
 
 - **FR-024**: La estructura de datos MUST crearse y evolucionar con migraciones versionadas, aplicables sobre una base vacía.
-- **FR-025**: La semilla MUST cargar los textos aprobados de perfil, misión, visión y valores en EN y ES (fuente: `identidad-visual/contenido/perfil-mision-vision-valores.md`), el nombre «Sharlton Romero», el título «Java Backend Engineer», el eslogan «One endpoint at a time.» / «Un endpoint a la vez.» y el contacto sromerobpersonal@gmail.com y +50670429481. El titular queda vacío.
+- **FR-025**: La semilla MUST cargar los textos aprobados de perfil, misión, visión y valores en EN y ES (fuente: `identidad-visual/contenido/perfil-mision-vision-valores.md`), el nombre «Sharlton Romero», el título «Java Backend Engineer», el eslogan «One endpoint at a time.» / «Un endpoint a la vez.» y el contacto sromerobpersonal@gmail.com, +50670429481, LinkedIn https://www.linkedin.com/in/sharlton-rb/ y GitHub https://github.com/SharltonRB. El titular queda vacío.
 - **FR-026**: La semilla MUST ser idempotente: si el contenido ya existe, no duplica ni sobrescribe nada.
 
 **Carga desde archivo**
@@ -240,7 +240,7 @@ Mientras no exista el panel (entrega 1, 2026-11-27), Sharlton escribe su experie
 - La subida de imágenes y del CV es de la funcionalidad 3. Aquí el proyecto solo guarda la referencia a su imagen y el texto alternativo.
 - El esqueleto del proyecto (estructura de módulos, comandos de desarrollo, tests y lint) y la integración continua se montan en esta funcionalidad, según `AGENTS.md` y `docs/decisiones/0002`.
 - La experiencia no tiene estado borrador o publicado: todo puesto guardado se publica. Solo los proyectos tienen borrador.
-- Los enlaces a LinkedIn y GitHub se dejan vacíos en la semilla salvo que Sharlton los entregue antes de implementar.
+- Los enlaces a LinkedIn y GitHub los entregó Sharlton el 2026-11-23 y van en la semilla (FR-025).
 - Las fechas de experiencia se guardan con precisión de mes; el formato visible por idioma es cosa del sitio público (funcionalidad 6).
 - El contenido de experiencia, habilidades y proyectos no se inventa: lo carga Sharlton, con la carga desde archivo (historia 6) hasta que exista el panel.
 - En la entrega 1 los proyectos van sin imagen: no hay subida de archivos hasta la funcionalidad 3.

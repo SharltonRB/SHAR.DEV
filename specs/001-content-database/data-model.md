@@ -136,6 +136,6 @@ Un proyecto nuevo siempre nace en `draft` (FR-015). Solo `published` aparece en 
 | --- | --- |
 | `profile` | `name` «Sharlton Romero»; `title_en` «Java Backend Engineer», `title_es` NULL; eslogan «One endpoint at a time.» / «Un endpoint a la vez.»; `headline` NULL/NULL; perfil, misión y visión literales de la fuente. |
 | `profile_values` | 4 filas en el orden de la fuente: Autonomy, Technical rigor, Clear communication, Continuous learning, con título y descripción separados por «—». |
-| `contact` | `sromerobpersonal@gmail.com`, `+50670429481`, LinkedIn y GitHub NULL. |
+| `contact` | `sromerobpersonal@gmail.com`, `+50670429481`, `https://www.linkedin.com/in/sharlton-rb/` y `https://github.com/SharltonRB`. |
 | `content_state` | una fila con `now()`. |
 | `experience`, `skill_categories`, `skills`, `projects` | vacías. |

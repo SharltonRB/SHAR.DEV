@@ -115,7 +115,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
     - Perfil profesional, misión y visión EN/ES de las secciones 1, 2 y 3.
     - Los 4 valores de la tabla de la sección 4 en su orden. Cada celda se parte en título y descripción por « — » y se quitan los `**` de negrita de la fuente, sin cambiar mayúsculas ni puntuación. Por ejemplo, título `Autonomy` y descripción `I take ownership from design to production.`.
     - `name` «Sharlton Romero»; `title` EN «Java Backend Engineer» y ES `null`; `slogan` «One endpoint at a time.» / «Un endpoint a la vez.»; `headline` `null`/`null`.
-    - Contacto `sromerobpersonal@gmail.com` y `+50670429481`; LinkedIn y GitHub `null`.
+    - Contacto `sromerobpersonal@gmail.com` y `+50670429481`; LinkedIn `https://www.linkedin.com/in/sharlton-rb/` y GitHub `https://github.com/SharltonRB`.
   - `src/content/seed.ts` con `seedContent(db): Promise<{ applied: boolean }>`, en una sola transacción:
     1. insertar `profile` con `ON CONFLICT DO NOTHING` y `RETURNING`;
     2. si no devuelve fila, terminar con `{ applied: false }`;
