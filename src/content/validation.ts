@@ -137,6 +137,23 @@ function optional(check: Check) {
 export const requiredText = (max: number) => required(maxLength(max));
 export const optionalText = (max: number) => optional(maxLength(max));
 
+/**
+ * Options for an object-level rule that reads only `fields`. Zod skips such
+ * a rule whenever any other field is missing; this runs it as long as its
+ * own fields are valid, so every problem is reported at once (FR-019).
+ */
+export function whenFieldsValid(...fields: string[]) {
+  return {
+    when: (payload: z.core.ParsePayload) =>
+      payload.issues.every((issue) => {
+        const [first] = issue.path ?? [];
+        return first === undefined
+          ? issue.code === "unrecognized_keys"
+          : !fields.includes(String(first));
+      }),
+  };
+}
+
 /** English required, Spanish optional (FR-001, FR-002). */
 export function bilingualText(max: number) {
   return z.strictObject({ en: requiredText(max), es: optionalText(max) });

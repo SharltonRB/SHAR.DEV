@@ -12,6 +12,7 @@ import {
   parseInput,
   TEXT_LIMITS,
   technologies,
+  whenFieldsValid,
 } from "./validation";
 
 export const PROJECT_STATUSES = ["draft", "published"] as const;
@@ -44,9 +45,11 @@ function requireImageAlt(
 }
 
 /** Input of `createProject` and `updateProject` (FR-014). */
+const imageFieldsValid = whenFieldsValid("imageUrl", "imageAlt");
+
 export const projectInputSchema = z
   .strictObject(projectFields)
-  .superRefine(requireImageAlt);
+  .superRefine(requireImageAlt, imageFieldsValid);
 
 /** A project in the import file: the same input plus a status, draft by default. */
 export const importedProjectSchema = z
@@ -54,7 +57,7 @@ export const importedProjectSchema = z
     ...projectFields,
     status: z.enum(PROJECT_STATUSES).default("draft"),
   })
-  .superRefine(requireImageAlt);
+  .superRefine(requireImageAlt, imageFieldsValid);
 
 export type ProjectInput = z.input<typeof projectInputSchema>;
 

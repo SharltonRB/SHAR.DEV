@@ -5,13 +5,14 @@ import {
   type Database,
   deleteExperience,
   type ExperienceInput,
+  getContentLastModified,
   getEditableContent,
   getPublishedContent,
   reorderExperience,
   seedContent,
   updateExperience,
 } from "../../src/content";
-import { rejectedFields } from "../helpers/content";
+import { rejectedFields, tick } from "../helpers/content";
 import { createTestDb } from "../helpers/test-db";
 
 let db: Database;
@@ -192,5 +193,59 @@ describe("experience (US3)", () => {
     await expect(deleteExperience(db, id)).rejects.toEqual(
       new ContentNotFoundError("experience", id),
     );
+    await expect(
+      updateExperience(db, id, position("Company A3")),
+    ).rejects.toEqual(new ContentNotFoundError("experience", id));
+  });
+
+  it("US3-2 an end month equal to the start month is accepted", async () => {
+    await createExperience(
+      db,
+      position("Test Company", { startMonth: "2024-05", endMonth: "2024-05" }),
+    );
+    expect(await companies()).toEqual(["Test Company"]);
+  });
+
+  it("FR-019 reports the date range together with a missing field", async () => {
+    const { company: _, ...withoutCompany } = position("Test Company", {
+      startMonth: "2024-05",
+      endMonth: "2024-01",
+    });
+    expect(
+      await rejectedFields(
+        createExperience(db, withoutCompany as ExperienceInput),
+      ),
+    ).toEqual([
+      { field: "company", code: "required" },
+      { field: "endMonth", code: "invalid_date_range" },
+    ]);
+  });
+
+  it("an invalid start month gives one issue, without a date range issue", async () => {
+    expect(
+      await rejectedFields(
+        createExperience(
+          db,
+          position("Test Company", { startMonth: "zzz", endMonth: "2024-01" }),
+        ),
+      ),
+    ).toEqual([{ field: "startMonth", code: "invalid_date" }]);
+  });
+
+  it("FR-023 the last modified date moves on a successful write only", async () => {
+    const before = await getContentLastModified(db);
+    await tick();
+    const { id } = await createExperience(db, position("Test Company"));
+    const afterWrite = await getContentLastModified(db);
+    expect(afterWrite.getTime()).toBeGreaterThan(before.getTime());
+
+    await tick();
+    await rejectedFields(
+      updateExperience(db, id, position("Test Company", { achievements: [] })),
+    );
+    await expect(deleteExperience(db, 9999)).rejects.toBeInstanceOf(
+      ContentNotFoundError,
+    );
+    expect(await getContentLastModified(db)).toEqual(afterWrite);
   });
 });

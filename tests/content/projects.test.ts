@@ -138,6 +138,21 @@ describe("projects (US2)", () => {
     ]);
   });
 
+  it("FR-019 reports a missing alt text together with a missing field", async () => {
+    const { title: _, ...withoutTitle } = project("A");
+    expect(
+      await rejectedFields(
+        createProject(db, {
+          ...withoutTitle,
+          imageUrl: "https://example.com/a.png",
+        } as ProjectInput),
+      ),
+    ).toEqual([
+      { field: "title", code: "required" },
+      { field: "imageAlt.en", code: "required" },
+    ]);
+  });
+
   it("FR-014 rejects an image without English alt text", async () => {
     expect(
       await rejectedFields(

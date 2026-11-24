@@ -12,6 +12,7 @@ import {
   requiredText,
   TEXT_LIMITS,
   technologies,
+  whenFieldsValid,
   yearMonth,
 } from "./validation";
 
@@ -30,17 +31,21 @@ export const experienceInputSchema = z
       .max(5, "At most 5 achievements."),
     technologies: technologies(),
   })
-  .superRefine((value, ctx) => {
-    // `YYYY-MM` strings sort in calendar order.
-    if (value.endMonth !== null && value.endMonth < value.startMonth) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["endMonth"],
-        message: "Must not be before the start month.",
-        params: { code: "invalid_date_range" },
-      });
-    }
-  });
+  .superRefine(
+    (value, ctx) => {
+      // `YYYY-MM` strings sort in calendar order. Runs only when both months
+      // are valid, so a wrong or future month gets a single issue.
+      if (value.endMonth !== null && value.endMonth < value.startMonth) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["endMonth"],
+          message: "Must not be before the start month.",
+          params: { code: "invalid_date_range" },
+        });
+      }
+    },
+    whenFieldsValid("startMonth", "endMonth"),
+  );
 
 export type ExperienceInput = z.input<typeof experienceInputSchema>;
 

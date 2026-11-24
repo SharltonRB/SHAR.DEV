@@ -6,6 +6,7 @@ import {
   type Database,
   deleteSkill,
   deleteSkillCategory,
+  getContentLastModified,
   getEditableContent,
   getPublishedContent,
   reorderSkillCategories,
@@ -15,7 +16,7 @@ import {
   updateSkill,
   updateSkillCategory,
 } from "../../src/content";
-import { rejectedFields } from "../helpers/content";
+import { rejectedFields, tick } from "../helpers/content";
 import { createTestDb } from "../helpers/test-db";
 
 let db: Database;
@@ -169,5 +170,30 @@ describe("skills (US3)", () => {
     await expect(
       updateSkillCategory(db, 9999, { name: { en: "X" } }),
     ).rejects.toEqual(new ContentNotFoundError("skillCategory", 9999));
+    await expect(updateSkill(db, 9999, { name: "X" })).rejects.toEqual(
+      new ContentNotFoundError("skill", 9999),
+    );
+    await expect(deleteSkillCategory(db, 9999)).rejects.toEqual(
+      new ContentNotFoundError("skillCategory", 9999),
+    );
+    await expect(reorderSkills(db, 9999, [])).rejects.toEqual(
+      new ContentNotFoundError("skillCategory", 9999),
+    );
+  });
+
+  it("FR-023 the last modified date moves on a successful write only", async () => {
+    const id = await category("Test Backend");
+    await createSkill(db, id, { name: "Java" });
+    const afterWrites = await getContentLastModified(db);
+
+    await tick();
+    await rejectedFields(createSkill(db, id, { name: "JAVA" }));
+    await rejectedFields(deleteSkillCategory(db, id));
+    expect(await getContentLastModified(db)).toEqual(afterWrites);
+
+    await createSkill(db, id, { name: "SQL" });
+    expect((await getContentLastModified(db)).getTime()).toBeGreaterThan(
+      afterWrites.getTime(),
+    );
   });
 });

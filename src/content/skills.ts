@@ -178,7 +178,8 @@ export async function updateSkill(
     const [current] = await tx
       .select({ categoryId: skills.categoryId })
       .from(skills)
-      .where(eq(skills.id, id));
+      .where(eq(skills.id, id))
+      .for("update");
     if (current === undefined) {
       throw new ContentNotFoundError("skill", id);
     }
