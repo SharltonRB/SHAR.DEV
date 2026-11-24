@@ -437,3 +437,10 @@ Task: "T016 [US3] skills.ts + tests/content/skills.test.ts"
 - Si al implementar algo contradice la spec, se detiene la tarea y se propone el cambio en `spec.md` (principio I).
 - Commit tras cada tarea con Conventional Commits en inglés, solo cuando Sharlton lo pida.
 - No inventar contenido de experiencia, habilidades ni proyectos: los tests usan datos ficticios evidentes (por ejemplo «Test Project») y la semilla solo trae los textos aprobados.
+
+---
+
+## Phase 9: Convergence
+
+- [X] T025 Medir `getPublishedContent` contra Neon tras el arranque en frío del cómputo (más de 5 min sin uso) y anotar el tiempo en research.md §12 per SC-006 (partial)
+- [X] T026 Exportar desde `src/content/index.ts` los esquemas Zod de entrada (perfil, valor, contacto, puesto, categoría, habilidad, proyecto e importación), o corregir el contrato si no deben ser públicos, per contracts/content-module.md «Los tipos de entrada se infieren de los esquemas Zod del módulo, que también se exportan» (partial)

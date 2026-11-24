@@ -141,6 +141,8 @@ Los `code` son estables (por ejemplo `required`, `too_long`, `duplicate`, `not_e
 
 **Alternatives considered**: ESLint con Prettier (más paquetes y configuración); en esta funcionalidad casi no hay archivos `.astro`.
 
-## 12. Medición en Neon (SC-006, T022)
+## 12. Medición en Neon (SC-006, T022, T025)
 
-El 2026-11-23, contra Neon Free (`shar-dev`, AWS us-east-1) con la semilla y la plantilla de ejemplo cargadas, `getPublishedContent(db, "es")` tardó 1662 ms en la primera llamada (incluye abrir la conexión WebSocket) y 828 ms en la segunda, medido desde Costa Rica. Las dos quedan bajo los 2 s. El cómputo ya estaba activo por `db:setup`, así que el arranque en frío tras la suspensión (unos 5 min sin uso) no está incluido: queda por medir en el primer build de Vercel, que corre en `iad1`, más cerca de la base.
+El 2026-11-23, contra Neon Free (`shar-dev`, AWS us-east-1) con la semilla y la plantilla de ejemplo cargadas, `getPublishedContent(db, "es")` tardó 1662 ms en la primera llamada (incluye abrir la conexión WebSocket) y 828 ms en la segunda, medido desde Costa Rica. Las dos quedan bajo los 2 s. El cómputo ya estaba activo por `db:setup`, así que esta medición no incluye el arranque en frío.
+
+Arranque en frío (T025): el 2026-11-24 a las 23:40 UTC, con el cómputo suspendido desde las 03:23 UTC (estado `idle` según la API de Neon) y los mismos datos, la primera llamada a `getPublishedContent(db, "es")` tardó 1786 ms, que incluyen despertar el cómputo y abrir la conexión. Después, `es` tardó 853 ms y `en` 717 ms. También se midió desde Costa Rica y todo queda bajo los 2 s, aunque el arranque en frío deja poco margen. El build de Vercel corre en `iad1`, más cerca de la base, así que debería tardar menos.
