@@ -214,7 +214,7 @@ Proyecto único en la raíz: `src/`, `tests/`, `scripts/` y `drizzle/` (ver plan
 
 **Independent Test**: crear puestos y categorías con habilidades, reordenarlos y verificarlos en el contenido publicado.
 
-- [ ] T015 [US3] Implementar en `src/content/experience.ts` `createExperience`, `updateExperience`, `deleteExperience` y `reorderExperience`:
+- [X] T015 [US3] Implementar en `src/content/experience.ts` `createExperience`, `updateExperience`, `deleteExperience` y `reorderExperience`:
   - **Entrada**: `company` «Sin traducción. Máx. 80»; `role` y `location` bilingües con «EN obligatorio, máx. 80»; `startMonth` `YYYY-MM` «No futura»; `endMonth` `YYYY-MM` o `null`, «`NULL` = puesto actual», «No futura» y no anterior a `startMonth` (`field: "endMonth"`, `code: "invalid_date_range"`); `achievements` «De 1 a 5 elementos `{en, es}`; `en` obligatorio, máx. 200 cada uno» (`too_few` / `too_many`); `technologies` «Al menos 1; cada una no vacía, máx. 80».
   - **Escritura**: posición al final, transacción con `touchContentState` y `ContentNotFoundError` (`entity: "experience"`).
   - Exportar en `src/content/index.ts`.

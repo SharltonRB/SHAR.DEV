@@ -6,6 +6,13 @@ export {
   ContentValidationError,
   type IssueCode,
 } from "./errors";
+export {
+  createExperience,
+  deleteExperience,
+  type ExperienceInput,
+  reorderExperience,
+  updateExperience,
+} from "./experience";
 export type { Locale } from "./locale";
 export {
   createProject,
