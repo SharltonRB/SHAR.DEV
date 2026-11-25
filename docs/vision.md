@@ -12,7 +12,7 @@ Resuelve dos problemas:
 - Que un reclutador entienda en segundos quién es, qué ha hecho y cómo contactarlo, en inglés o en español.
 - Que Sharlton pueda mantener el contenido al día desde un panel de administración, sin tocar código.
 
-Aplica la identidad visual SHAR.DEV, ya definida: estética pixel art / retro gaming, paleta 60-30-10 en modo claro y oscuro, Handjet y Space Grotesk. La fuente de verdad de la marca es la carpeta externa `SharDev - portafolio/identidad-visual/` (solo lectura; los archivos necesarios se copian al proyecto).
+Aplica la identidad visual SHAR.DEV, ya definida: estética pixel art / retro gaming, paleta 60-30-10 en modo claro y oscuro, Handjet y Space Grotesk. La fuente de verdad de la marca es la carpeta externa `Cenfo/2026/C3/Portafolio Profesional/docs referencia/identidad-visual/` (solo lectura; los archivos necesarios se copian al proyecto).
 
 ## Alcance de la primera versión
 

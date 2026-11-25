@@ -81,7 +81,7 @@ src/
 
 ## Marca
 
-- Fuente de verdad: `/Users/sharltonrb/Desktop/Proyectos/Personal/SharDev - portafolio/identidad-visual/` (fuera del repo, **solo lectura**). Los archivos necesarios (logos, favicon, fuentes) se copian al proyecto; nunca se modifican allí.
+- Fuente de verdad: `/Users/sharltonrb/Desktop/Cenfo/2026/C3/Portafolio Profesional/docs referencia/identidad-visual/` (fuera del repo, **solo lectura**). Los archivos necesarios (logos, favicon, fuentes) se copian al proyecto (los del diseño, en `docs/diseno/marca/`); nunca se modifican allí.
 - Modo claro 60-30-10: naranja `#FF6B35`, negro `#0A0A0A`, cian `#22D3EE`, sobre lienzo `#FAFAFA`.
 - Modo oscuro 60-30-10, solo naranja: `#FF6B35`, gris `#D4D4D8`, naranja brasa `#FF9A5C`, sobre `#0A0A0A`.
 - El texto sobre naranja siempre es negro. El naranja como texto solo va sobre fondo oscuro. Ningún color fuera de la paleta (ni verde ni rosa).
