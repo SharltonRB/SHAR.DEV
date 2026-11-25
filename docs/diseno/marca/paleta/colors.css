@@ -1,0 +1,19 @@
+/* SHAR.DEV — Paleta 60-30-10 */
+:root {
+  /* 60 % · Dominante — Naranja Pixel */
+  --color-primary: #FF6B35;
+  --color-primary-dark: #C2410C;   /* sombras, estado pressed */
+  --color-primary-soft: #FFE4D6;   /* fondos suaves */
+
+  /* 30 % · Secundario — Negro Tinta */
+  --color-ink: #0A0A0A;            /* texto, bordes, sombras, navbar, footer */
+  --color-ink-soft: #3F3F46;       /* texto secundario */
+
+  /* 10 % · Acento — Cian Cursor */
+  --color-accent: #22D3EE;         /* hover, foco, badges, elemento activo */
+  --color-accent-dark: #0E7490;    /* enlaces sobre fondo claro (5.36:1) */
+
+  /* Lienzo (fuera de la regla) */
+  --color-canvas: #FAFAFA;
+  --color-white: #FFFFFF;
+}

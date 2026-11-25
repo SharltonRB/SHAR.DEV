@@ -1,0 +1,17 @@
+/* SHAR.DEV — Tipografías web (Google Fonts, licencia OFL) */
+/* Pegar en <head> de index.html:
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Handjet:wght@600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+*/
+:root {
+  --font-display: 'Handjet', 'Courier New', monospace;      /* títulos, botones, etiquetas */
+  --font-body: 'Space Grotesk', system-ui, sans-serif;     /* párrafos, navegación, datos */
+}
+h1 { font: 600 64px/64px var(--font-display); }
+h2 { font: 600 44px/48px var(--font-display); }
+h3 { font: 600 30px/34px var(--font-display); }
+.btn, .label { font: 600 22px/24px var(--font-display); letter-spacing: .03em; }  /* Handjet: usar desde 20 px */
+body, p { font: 400 16px/24px var(--font-body); }
+.lead { font: 500 20px/30px var(--font-body); }
+.note { font: 400 13px/20px var(--font-body); color: #3F3F46; }

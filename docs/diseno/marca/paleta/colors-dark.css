@@ -1,0 +1,13 @@
+/* SHAR.DEV — modo oscuro (60-30-10) · solo naranja */
+:root[data-theme="dark"], .dark {
+  --primary: #FF6B35;        /* 60 % Naranja Pixel: marca, bloques, botones */
+  --primary-dark: #C2410C;   /* sombras duras / pressed */
+  --primary-soft: #2A1308;   /* resaltes suaves */
+  --ink: #D4D4D8;            /* 30 % Gris Niebla: texto, bordes, navbar/footer */
+  --ink-soft: #A1A1AA;       /* texto secundario */
+  --accent: #FF9A5C;         /* 10 % Naranja Brasa: hover, foco, badges, activo */
+  --canvas: #0A0A0A;         /* fondo (fuera de la regla) */
+  --panel: #111111;
+  --line: #1C1C1C;
+  --on-primary: #0A0A0A;     /* texto sobre naranja y naranja brasa: siempre negro */
+}
