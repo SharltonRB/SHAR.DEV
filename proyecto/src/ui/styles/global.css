@@ -26,7 +26,7 @@
   --shadow-sm: 4px 4px 0 var(--c-shadow);
   --gap: clamp(1rem, 2.5vw, 1.5rem);
   --section-space: clamp(4rem, 9vw, 7rem);
-  --max: 72rem;
+  --max: 96rem;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
