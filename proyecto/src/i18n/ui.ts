@@ -25,6 +25,12 @@ export const ui = {
     hello: "Hello, I'm",
     windowTitle: "~/shar.dev — home",
     status: "status: building APIs",
+    boot: [
+      "booting shar.dev",
+      "loading modules: java, spring-boot, graphql",
+      "status: ready to ship",
+    ],
+    liveLog: "live requests",
     about: {
       title: "About",
       mission: "Mission",
@@ -119,6 +125,12 @@ export const ui = {
     hello: "Hola, soy",
     windowTitle: "~/shar.dev — inicio",
     status: "estado: construyendo APIs",
+    boot: [
+      "iniciando shar.dev",
+      "cargando módulos: java, spring-boot, graphql",
+      "estado: listo para desplegar",
+    ],
+    liveLog: "peticiones en vivo",
     about: {
       title: "Sobre mí",
       mission: "Misión",
