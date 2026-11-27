@@ -1,0 +1,216 @@
+---
+import type { Locale, PublishedContent } from "../content";
+import { formatMonth, type UiStrings } from "../i18n/ui";
+import PixelIcon from "./PixelIcon.astro";
+
+interface Props {
+  experience: PublishedContent["experience"];
+  locale: Locale;
+  t: UiStrings;
+}
+
+const { experience, locale, t } = Astro.props;
+---
+
+{
+  experience.length > 0 && (
+    <section id="experience" class="section" aria-labelledby="experience-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 id="experience-title" class="section-title">{t.experience.title}</h2>
+        </div>
+
+        <ol class="timeline">
+          {experience.map((job) => {
+            const start = formatMonth(job.startMonth, locale);
+            const end = job.endLabel ?? (job.endMonth ? formatMonth(job.endMonth, locale) : "");
+            const current = job.endMonth === null;
+            return (
+              <li class:list={["job", { current }]}>
+                <div class="rail reveal" aria-hidden="true">
+                  <span class="node" />
+                </div>
+                <p class="dates reveal">
+                  <time datetime={job.startMonth}>{start}</time>
+                  <span aria-hidden="true"> → </span>
+                  <span class="visually-hidden"> – </span>
+                  {job.endMonth ? <time datetime={job.endMonth}>{end}</time> : <span class="now">{end}</span>}
+                </p>
+                <article class="window card reveal" style="--delay: 100ms">
+                  <div class="window-bar">
+                    <div class="window-dots" aria-hidden="true"><span /><span /><span /></div>
+                    <span class="company">{job.company}</span>
+                  </div>
+                  <div class="card-body">
+                    <div class="card-head">
+                      <h3>{job.role}</h3>
+                      {current && (
+                        <span class="live">
+                          <span class="live-dot" aria-hidden="true" />
+                          {t.experience.current}
+                        </span>
+                      )}
+                    </div>
+                    <p class="location">
+                      <PixelIcon name="pin" />
+                      {job.location}
+                    </p>
+                    <h4 class="visually-hidden">{t.experience.achievements}</h4>
+                    <ul class="achievements">
+                      {job.achievements.map((a) => <li>{a}</li>)}
+                    </ul>
+                    <h4 class="visually-hidden">{t.experience.stack}</h4>
+                    <ul class="chip-list">
+                      {job.technologies.map((tech) => <li class="chip">{tech}</li>)}
+                    </ul>
+                  </div>
+                </article>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+  }
+  .job {
+    display: grid;
+    grid-template-columns: 10rem 2.5rem minmax(0, 1fr);
+    grid-template-areas: "dates rail card";
+    column-gap: 1rem;
+    position: relative;
+  }
+  .dates {
+    grid-area: dates;
+    font: 600 1.5rem/1.15 var(--font-display);
+    text-align: right;
+    padding-top: 0.4rem;
+  }
+  .now {
+    display: inline-block;
+    padding: 0.1rem 0.45rem 0;
+    background: var(--c-primary);
+    color: var(--c-on-primary);
+  }
+  .rail {
+    grid-area: rail;
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  .rail::before {
+    content: "";
+    position: absolute;
+    top: 1.6rem;
+    bottom: calc(-1 * clamp(2.5rem, 6vw, 4rem));
+    width: 4px;
+    background: repeating-linear-gradient(var(--c-ink) 0 8px, transparent 8px 14px);
+  }
+  .job:last-child .rail::before {
+    display: none;
+  }
+  .node {
+    position: relative;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.6rem;
+    background: var(--c-surface);
+    border: 3px solid var(--c-ink);
+    transform: rotate(45deg);
+  }
+  .current .node {
+    background: var(--c-primary);
+  }
+  .card {
+    grid-area: card;
+    transition:
+      transform 160ms var(--step),
+      box-shadow 160ms var(--step);
+  }
+  .card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--c-shadow);
+  }
+  .company {
+    font-size: 1.375rem;
+  }
+  .card-body {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+  .card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+  }
+  .card-head h3 {
+    font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+  }
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.2rem 0.6rem;
+    border: 2px solid var(--c-ink);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .live-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    background: var(--c-accent);
+    animation: blink 1.2s steps(1, end) infinite;
+  }
+  .location {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    color: var(--c-ink-soft);
+  }
+  .achievements {
+    margin: 1.25rem 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .achievements li {
+    position: relative;
+    padding-left: 1.5rem;
+    max-width: 70ch;
+  }
+  .achievements li::before {
+    content: "";
+    position: absolute;
+    left: 0.15rem;
+    top: 0.55em;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--c-primary);
+  }
+
+  @media (max-width: 760px) {
+    .job {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      grid-template-areas:
+        "rail dates"
+        "rail card";
+      row-gap: 0.75rem;
+    }
+    .dates {
+      text-align: left;
+      padding-top: 0.2rem;
+      font-size: 1.375rem;
+    }
+  }
+</style>

@@ -1,0 +1,282 @@
+---
+import type { Locale } from "../content";
+import { homePath, type UiStrings } from "../i18n/ui";
+import PixelIcon from "./PixelIcon.astro";
+
+interface Props {
+  locale: Locale;
+  t: UiStrings;
+  mailto: string;
+}
+
+const { locale, t, mailto } = Astro.props;
+const home = homePath[locale];
+const links = [
+  { id: "about", label: t.nav.about },
+  { id: "experience", label: t.nav.experience },
+  { id: "skills", label: t.nav.skills },
+  { id: "projects", label: t.nav.projects },
+  { id: "contact", label: t.nav.contact },
+];
+---
+
+<header class="navbar" data-navbar>
+  <div class="container navbar-inner">
+    <a class="brand" href={home} aria-label="SHAR.DEV">
+      <img class="logo-light" src="/brand/shardev-navbar.svg" alt="" width="150" height="32" />
+      <img class="logo-dark" src="/brand/shardev-navbar-dark.svg" alt="" width="150" height="32" />
+    </a>
+
+    <nav class="nav" id="site-nav" aria-label={t.nav.menu} data-nav>
+      <ul>
+        {links.map((l) => <li><a href={`#${l.id}`} data-nav-link>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <div class="lang" role="group" aria-label={t.langLabel}>
+        <a href={homePath.en} lang="en" hreflang="en" aria-current={locale === "en" ? "true" : undefined} data-lang="en">EN</a>
+        <a href={homePath.es} lang="es" hreflang="es" aria-current={locale === "es" ? "true" : undefined} data-lang="es">ES</a>
+      </div>
+      <button class="icon-btn" type="button" aria-label={t.themeToggle} data-theme-toggle>
+        <PixelIcon name="moon" class="icon-moon" />
+        <PixelIcon name="sun" class="icon-sun" />
+      </button>
+      <a class="btn btn-primary mission" href={mailto}>{t.startMission}</a>
+      <button
+        class="icon-btn menu-btn"
+        type="button"
+        aria-controls="site-nav"
+        aria-expanded="false"
+        aria-label={t.nav.menu}
+        data-label-open={t.nav.menu}
+        data-label-close={t.nav.close}
+        data-menu-toggle
+      >
+        <PixelIcon name="menu" class="icon-menu" />
+        <PixelIcon name="close" class="icon-close" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--c-surface);
+    border-bottom: var(--border);
+  }
+  .navbar-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4.25rem;
+  }
+  .brand {
+    flex: none;
+  }
+  .brand img {
+    height: 2rem;
+    width: auto;
+  }
+  .logo-dark {
+    display: none;
+  }
+  :global([data-theme="dark"]) .logo-dark {
+    display: block;
+  }
+  :global([data-theme="dark"]) .logo-light {
+    display: none;
+  }
+  .nav {
+    margin-left: auto;
+  }
+  .nav ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav a {
+    display: block;
+    padding: 0.5rem 0.65rem;
+    color: var(--c-ink);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+  }
+  .nav a:hover,
+  .nav a[aria-current="true"] {
+    border-bottom-color: var(--c-primary);
+  }
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .lang {
+    display: flex;
+    border: var(--border);
+  }
+  .lang a {
+    display: grid;
+    place-items: center;
+    min-width: 2.75rem;
+    min-height: 2.5rem;
+    font: 600 1.25rem/1 var(--font-display);
+    color: var(--c-ink);
+    text-decoration: none;
+  }
+  .lang a[aria-current="true"] {
+    background: var(--c-ink);
+    color: var(--c-surface);
+  }
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    font-size: 1.15rem;
+    color: var(--c-ink);
+    background: var(--c-surface);
+    border: var(--border);
+    cursor: pointer;
+  }
+  .icon-btn:hover {
+    color: var(--c-on-primary);
+    background: var(--c-accent);
+  }
+  .icon-btn :global(.icon-sun),
+  .icon-btn :global(.icon-close) {
+    display: none;
+  }
+  :global([data-theme="dark"]) .icon-btn :global(.icon-sun) {
+    display: block;
+  }
+  :global([data-theme="dark"]) .icon-btn :global(.icon-moon) {
+    display: none;
+  }
+  .menu-btn {
+    display: none;
+  }
+  .menu-btn[aria-expanded="true"] :global(.icon-close) {
+    display: block;
+  }
+  .menu-btn[aria-expanded="true"] :global(.icon-menu) {
+    display: none;
+  }
+  .mission {
+    font-size: 1.25rem;
+    min-height: 2.75rem;
+  }
+
+  @media (max-width: 960px) {
+    .menu-btn {
+      display: grid;
+    }
+    .tools {
+      margin-left: auto;
+    }
+    .nav {
+      display: none;
+      position: absolute;
+      inset: 100% 0 auto;
+      margin: 0;
+      background: var(--c-surface);
+      border-bottom: var(--border);
+    }
+    .nav.is-open {
+      display: block;
+    }
+    .nav ul {
+      flex-direction: column;
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+      padding-block: 0.75rem;
+    }
+    .nav a {
+      padding: 0.85rem 0.25rem;
+      font-size: 1.125rem;
+    }
+  }
+  @media (max-width: 560px) {
+    .mission {
+      display: none;
+    }
+    .brand img {
+      height: 1.6rem;
+    }
+    .tools {
+      gap: 0.4rem;
+    }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+
+  document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {}
+  });
+
+  // Remember the chosen language for the next visit (no automatic redirect).
+  for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-lang]")) {
+    link.addEventListener("click", () => {
+      try {
+        localStorage.setItem("lang", link.dataset.lang ?? "en");
+      } catch {}
+    });
+  }
+
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const setMenu = (open: boolean) => {
+    if (!nav || !toggle) return;
+    nav.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute(
+      "aria-label",
+      (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? "",
+    );
+  };
+  toggle?.addEventListener("click", () => setMenu(!nav?.classList.contains("is-open")));
+  for (const link of document.querySelectorAll("[data-nav-link]")) {
+    link.addEventListener("click", () => setMenu(false));
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && nav?.classList.contains("is-open")) {
+      setMenu(false);
+      toggle?.focus();
+    }
+  });
+
+  // Highlight the section in view.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>("[data-nav-link]")].map((a) => [
+      a.hash.slice(1),
+      a,
+    ]),
+  );
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        for (const a of links.values()) a.removeAttribute("aria-current");
+        links.get(entry.target.id)?.setAttribute("aria-current", "true");
+      }
+    },
+    { rootMargin: "-45% 0px -50% 0px" },
+  );
+  for (const id of links.keys()) {
+    const section = document.getElementById(id);
+    if (section) observer.observe(section);
+  }
+</script>

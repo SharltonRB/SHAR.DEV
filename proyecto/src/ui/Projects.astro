@@ -1,0 +1,311 @@
+---
+import type { PublishedContent } from "../content";
+import type { UiStrings } from "../i18n/ui";
+import PixelIcon from "./PixelIcon.astro";
+
+interface Props {
+  projects: PublishedContent["projects"];
+  t: UiStrings;
+}
+
+const { projects, t } = Astro.props;
+
+// Filters: every technology used by a project, most used first.
+const counts = new Map<string, number>();
+for (const p of projects) {
+  for (const tech of p.technologies)
+    counts.set(tech, (counts.get(tech) ?? 0) + 1);
+}
+const filters = [...counts.entries()]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  .map(([tech]) => tech);
+
+/**
+ * Pixel "code window" cover drawn from the title, so projects without an
+ * image still get their own SVG illustration. Deterministic per title.
+ */
+function cover(title: string) {
+  let seed = 0;
+  for (const ch of title) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+  const next = () => {
+    seed = (seed * 1103515245 + 12345) >>> 0;
+    return seed / 2 ** 32;
+  };
+  const lines: { x: number; y: number; w: number; accent: boolean }[] = [];
+  for (let row = 0; row < 7; row++) {
+    const indent = Math.floor(next() * 3) * 2;
+    const width = 4 + Math.floor(next() * 16);
+    lines.push({
+      x: 3 + indent,
+      y: 4 + row * 2,
+      w: width,
+      accent: next() > 0.72,
+    });
+  }
+  return lines;
+}
+---
+
+{
+  projects.length > 0 && (
+    <section id="projects" class="section" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 id="projects-title" class="section-title">{t.projects.title}</h2>
+          <p class="section-intro">{t.projects.intro}</p>
+        </div>
+
+        <div class="filters reveal" role="group" aria-label={t.projects.filterLabel} data-filters>
+          <button type="button" class="filter" aria-pressed="true" data-filter="*">{t.projects.all}</button>
+          {filters.map((tech) => (
+            <button type="button" class="filter" aria-pressed="false" data-filter={tech}>{tech}</button>
+          ))}
+        </div>
+
+        <ul class="gallery" data-gallery>
+          {projects.map((p, i) => (
+            <li class="project reveal" style={`--delay: ${(i % 3) * 90}ms`} data-techs={JSON.stringify(p.technologies)}>
+              <article class="window project-card">
+                <div class="cover" aria-hidden="true">
+                  <svg viewBox="0 0 28 18" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid slice">
+                    <rect width="28" height="18" class="cover-bg" />
+                    <rect x="0" y="0" width="28" height="2" class="cover-bar" />
+                    <rect x="1" y="0.5" width="1" height="1" class="cover-dot" />
+                    <rect x="2.5" y="0.5" width="1" height="1" class="cover-dot" />
+                    <rect x="4" y="0.5" width="1" height="1" class="cover-dot" />
+                    {cover(p.title).map((l) => (
+                      <rect x={l.x} y={l.y} width={l.w} height="1" class={l.accent ? "cover-accent" : "cover-line"} />
+                    ))}
+                    <rect x="3" y="16" width="2" height="1" class="cover-cursor" />
+                  </svg>
+                </div>
+                <div class="project-body">
+                  <h3>{p.title}</h3>
+                  <ul class="chip-list">
+                    {p.technologies.map((tech) => <li class="chip">{tech}</li>)}
+                  </ul>
+                  <button type="button" class="btn btn-secondary details" data-open={`project-${i}`}>
+                    {t.projects.details}
+                  </button>
+                </div>
+              </article>
+
+              <dialog class="window modal" id={`project-${i}`} aria-labelledby={`project-${i}-title`}>
+                <div class="window-bar">
+                  <div class="window-dots" aria-hidden="true"><span /><span /><span /></div>
+                  <form method="dialog">
+                    <button class="close" aria-label={t.projects.close}>
+                      <PixelIcon name="close" />
+                    </button>
+                  </form>
+                </div>
+                <div class="modal-body">
+                  <h3 id={`project-${i}-title`}>{p.title}</h3>
+                  <p>{p.description}</p>
+                  <ul class="chip-list">
+                    {p.technologies.map((tech) => <li class="chip">{tech}</li>)}
+                  </ul>
+                  {(p.codeUrl || p.demoUrl) && (
+                    <div class="links">
+                      {p.codeUrl && (
+                        <a class="btn btn-primary" href={p.codeUrl} target="_blank" rel="noopener noreferrer">
+                          <PixelIcon name="code" />
+                          {t.projects.code}
+                        </a>
+                      )}
+                      {p.demoUrl && (
+                        <a class="btn btn-secondary" href={p.demoUrl} target="_blank" rel="noopener noreferrer">
+                          <PixelIcon name="external" />
+                          {t.projects.demo}
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </dialog>
+            </li>
+          ))}
+        </ul>
+        <p class="empty" hidden data-empty>{t.projects.empty}</p>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+  .filter {
+    min-height: 2.75rem;
+    padding: 0.4rem 0.9rem;
+    font: 500 0.9375rem/1 var(--font-body);
+    color: var(--c-ink);
+    background: var(--c-surface);
+    border: 2px solid var(--c-ink);
+    cursor: pointer;
+  }
+  .filter:hover {
+    background: var(--c-primary-soft);
+  }
+  .filter[aria-pressed="true"] {
+    background: var(--c-ink);
+    color: var(--c-surface);
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .project[hidden] {
+    display: none;
+  }
+  .project-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition:
+      transform 160ms var(--step),
+      box-shadow 160ms var(--step);
+  }
+  .project-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 10px 10px 0 var(--c-shadow);
+  }
+  .cover {
+    border-bottom: var(--border);
+    aspect-ratio: 28 / 13;
+    overflow: hidden;
+  }
+  .cover svg {
+    width: 100%;
+    height: 100%;
+  }
+  .cover-bg {
+    fill: #0a0a0a;
+  }
+  .cover-bar,
+  .cover-line {
+    fill: var(--c-primary);
+  }
+  .cover-dot {
+    fill: #0a0a0a;
+  }
+  .cover-accent {
+    fill: #ff9a5c;
+  }
+  .cover-cursor {
+    fill: var(--c-primary);
+    animation: blink 1s steps(1, end) infinite;
+  }
+  .project-body {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    flex: 1;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .project-body h3 {
+    font-size: 2rem;
+  }
+  .details {
+    justify-self: start;
+    margin-top: auto;
+  }
+  .empty {
+    margin-top: 1rem;
+    color: var(--c-ink-soft);
+  }
+
+  .modal {
+    width: min(100% - 2rem, 40rem);
+    max-height: calc(100dvh - 2rem);
+    padding: 0;
+    color: var(--c-ink);
+  }
+  .modal::backdrop {
+    background: rgb(10 10 10 / 0.7);
+  }
+  .modal[open] {
+    animation: pop 220ms steps(4, end);
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.92);
+      opacity: 0;
+    }
+  }
+  .close {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: -0.25rem -0.4rem;
+    font-size: 1rem;
+    color: var(--c-on-primary);
+    background: transparent;
+    border: 2px solid var(--c-on-primary);
+    cursor: pointer;
+  }
+  .modal-body {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 4vw, 2rem);
+  }
+  .modal-body h3 {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+  }
+  .modal-body p {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+</style>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-open]")) {
+    button.addEventListener("click", () => {
+      const dialog = document.getElementById(button.dataset.open ?? "");
+      if (dialog instanceof HTMLDialogElement) dialog.showModal();
+    });
+  }
+  // Clicking the backdrop closes the dialog.
+  for (const dialog of document.querySelectorAll<HTMLDialogElement>("dialog.modal")) {
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+
+  const group = document.querySelector("[data-filters]");
+  const items = [...document.querySelectorAll<HTMLElement>("[data-gallery] > li")];
+  const empty = document.querySelector<HTMLElement>("[data-empty]");
+  group?.addEventListener("click", (e) => {
+    const target = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
+    if (!target) return;
+    for (const b of group.querySelectorAll("[data-filter]")) {
+      b.setAttribute("aria-pressed", String(b === target));
+    }
+    const tech = target.dataset.filter;
+    let shown = 0;
+    for (const item of items) {
+      const techs: string[] = JSON.parse(item.dataset.techs ?? "[]");
+      const visible = tech === "*" || techs.includes(tech ?? "");
+      item.hidden = !visible;
+      if (visible) {
+        shown++;
+        item.classList.add("is-visible");
+      }
+    }
+    if (empty) empty.hidden = shown > 0;
+  });
+</script>

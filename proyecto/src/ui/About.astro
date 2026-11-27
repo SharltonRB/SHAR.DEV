@@ -1,0 +1,156 @@
+---
+import type { PublishedContent } from "../content";
+import type { UiStrings } from "../i18n/ui";
+
+interface Props {
+  profile: PublishedContent["profile"];
+  values: PublishedContent["values"];
+  t: UiStrings;
+}
+
+const { profile, values, t } = Astro.props;
+---
+
+<section id="about" class="section" aria-labelledby="about-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 id="about-title" class="section-title">{t.about.title}</h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="window summary reveal">
+        <div class="window-bar">
+          <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span>about.md</span>
+        </div>
+        <p>{profile.summary}</p>
+      </div>
+
+      <div class="mv">
+        <article class="mv-card reveal" style="--delay: 80ms">
+          <h3>{t.about.mission}</h3>
+          <p>{profile.mission}</p>
+        </article>
+        <article class="mv-card mv-vision reveal" style="--delay: 160ms">
+          <h3>{t.about.vision}</h3>
+          <p>{profile.vision}</p>
+        </article>
+      </div>
+    </div>
+
+    {
+      values.length > 0 && (
+        <div class="values">
+          <h3 class="values-title reveal">{t.about.values}</h3>
+          <ul class="values-list">
+            {values.map((v, i) => (
+              <li class="value reveal" style={`--delay: ${i * 90}ms`}>
+                <span class="value-mark" aria-hidden="true" />
+                <h4>{v.title}</h4>
+                <p>{v.description.charAt(0).toUpperCase() + v.description.slice(1)}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    align-items: start;
+  }
+  .summary p {
+    padding: clamp(1.25rem, 3vw, 2rem);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+  .mv {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .mv-card {
+    padding: 1.5rem;
+    border: var(--border);
+    background: var(--c-primary);
+    color: var(--c-on-primary);
+    box-shadow: var(--shadow);
+  }
+  .mv-vision {
+    background: var(--c-surface);
+    color: var(--c-ink);
+    margin-left: clamp(0rem, 3vw, 2rem);
+  }
+  .mv-card h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .values {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+  .values-title {
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .values-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .value {
+    position: relative;
+    padding: 1.25rem 1.25rem 1.5rem;
+    background: var(--c-surface);
+    border: var(--border);
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform 160ms var(--step),
+      box-shadow 160ms var(--step);
+  }
+  .value:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--c-shadow);
+  }
+  .value-mark {
+    display: block;
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-bottom: 0.9rem;
+    background: var(--c-primary);
+    transform: rotate(45deg);
+  }
+  .value:nth-child(even) .value-mark {
+    background: var(--c-accent);
+  }
+  .value h4 {
+    font: 600 1.75rem/1.05 var(--font-display);
+    margin: 0 0 0.4rem;
+  }
+  .value p {
+    color: var(--c-ink-soft);
+  }
+
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+    .values-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 480px) {
+    .values-list {
+      grid-template-columns: 1fr;
+    }
+    .mv-vision {
+      margin-left: 0;
+    }
+  }
+</style>

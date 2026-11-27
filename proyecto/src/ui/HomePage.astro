@@ -1,0 +1,66 @@
+---
+import type { Locale, PublishedContent } from "../content";
+import { ui } from "../i18n/ui";
+import About from "./About.astro";
+import Contact from "./Contact.astro";
+import Experience from "./Experience.astro";
+import FloatingActions from "./FloatingActions.astro";
+import Footer from "./Footer.astro";
+import Hero from "./Hero.astro";
+import Layout from "./Layout.astro";
+import Navbar from "./Navbar.astro";
+import Projects from "./Projects.astro";
+import Skills from "./Skills.astro";
+
+interface Props {
+  locale: Locale;
+  content: PublishedContent;
+}
+
+const { locale, content } = Astro.props;
+const t = ui[locale];
+const mailto = `mailto:${content.contact.email}?subject=${encodeURIComponent(t.mailSubject)}`;
+const whatsappHref = `https://wa.me/${content.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(t.whatsappText)}`;
+const cvHref = "/cv/Sharlton-Romero-CV.pdf";
+---
+
+<Layout locale={locale} title={t.metaTitle} description={t.metaDescription} alternates>
+  <a class="skip-link" href="#main">{t.skipToContent}</a>
+  <Navbar locale={locale} t={t} mailto={mailto} />
+  <main id="main" tabindex="-1">
+    <Hero profile={content.profile} t={t} mailto={mailto} cvHref={cvHref} />
+    <About profile={content.profile} values={content.values} t={t} />
+    <Experience experience={content.experience} locale={locale} t={t} />
+    <Skills skillCategories={content.skillCategories} t={t} />
+    <Projects projects={content.projects} t={t} />
+    <Contact contact={content.contact} locale={locale} t={t} mailto={mailto} whatsappHref={whatsappHref} />
+  </main>
+  <Footer contact={content.contact} name={content.profile.name} t={t} />
+  <FloatingActions t={t} whatsappHref={whatsappHref} />
+</Layout>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+</style>
+
+<script>
+  // Pixel reveal: elements appear once when they enter the viewport.
+  const items = document.querySelectorAll<HTMLElement>(".reveal");
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    for (const item of items) observer.observe(item);
+  } else {
+    for (const item of items) item.classList.add("is-visible");
+  }
+</script>

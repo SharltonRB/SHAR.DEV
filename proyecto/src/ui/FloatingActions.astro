@@ -1,0 +1,100 @@
+---
+import type { UiStrings } from "../i18n/ui";
+import PixelIcon from "./PixelIcon.astro";
+
+interface Props {
+  t: UiStrings;
+  whatsappHref: string;
+}
+
+const { t, whatsappHref } = Astro.props;
+---
+
+<div class="floating">
+  <button class="fab top" type="button" aria-label={t.scrollTop} title={t.scrollTop} data-scroll-top hidden>
+    <PixelIcon name="up" />
+  </button>
+  <a class="fab whatsapp" href={whatsappHref} target="_blank" rel="noopener noreferrer" aria-label={t.whatsappChat}>
+    <PixelIcon name="whatsapp" />
+    <span class="fab-label">{t.whatsappChat}</span>
+  </a>
+</div>
+
+<style>
+  .floating {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 40;
+    display: grid;
+    justify-items: end;
+    gap: 0.75rem;
+  }
+  .fab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 3.25rem;
+    height: 3.25rem;
+    padding: 0 0.95rem;
+    font-size: 1.35rem;
+    color: var(--c-on-primary);
+    background: var(--c-primary);
+    border: var(--border);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform 160ms var(--step),
+      box-shadow 160ms var(--step);
+  }
+  .fab:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--c-shadow);
+  }
+  .top {
+    justify-content: center;
+    padding: 0;
+    color: var(--c-ink);
+    background: var(--c-surface);
+    animation: pop-in 200ms steps(3, end);
+  }
+  .top[hidden] {
+    display: none;
+  }
+  @keyframes pop-in {
+    from {
+      transform: translateY(12px);
+      opacity: 0;
+    }
+  }
+  .fab-label {
+    font: 600 1.25rem/1 var(--font-display);
+    letter-spacing: 0.03em;
+  }
+  @media (max-width: 640px) {
+    .fab-label {
+      display: none;
+    }
+    .whatsapp {
+      justify-content: center;
+      padding: 0;
+    }
+  }
+</style>
+
+<script>
+  const top = document.querySelector<HTMLButtonElement>("[data-scroll-top]");
+  if (top) {
+    const update = () => {
+      top.hidden = window.scrollY < 600;
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    top.addEventListener("click", () => {
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      document.querySelector<HTMLElement>("#main")?.focus({ preventScroll: true });
+    });
+  }
+</script>

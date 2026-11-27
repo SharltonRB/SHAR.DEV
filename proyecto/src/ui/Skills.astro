@@ -1,0 +1,100 @@
+---
+import type { PublishedContent } from "../content";
+import type { UiStrings } from "../i18n/ui";
+
+interface Props {
+  skillCategories: PublishedContent["skillCategories"];
+  t: UiStrings;
+}
+
+const { skillCategories, t } = Astro.props;
+---
+
+{
+  skillCategories.length > 0 && (
+    <section id="skills" class="section skills" aria-labelledby="skills-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 id="skills-title" class="section-title">{t.skills.title}</h2>
+          <p class="section-intro">{t.skills.intro}</p>
+        </div>
+
+        <div class="inventory">
+          {skillCategories.map((category, i) => (
+            <section class="slot-group reveal" style={`--delay: ${(i % 3) * 90}ms`} aria-labelledby={`skill-cat-${i}`}>
+              <h3 id={`skill-cat-${i}`}>{category.name}</h3>
+              <ul>
+                {category.skills.map((skill) => (
+                  <li>
+                    <span class="slot" aria-hidden="true" />
+                    {skill.name}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .skills {
+    background: var(--c-primary-soft);
+    border-block: var(--border);
+  }
+  .inventory {
+    columns: 3 18rem;
+    column-gap: 1.5rem;
+  }
+  .slot-group {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    background: var(--c-surface);
+    border: var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  .slot-group h3 {
+    padding: 0.6rem 1rem 0.45rem;
+    font-size: 1.625rem;
+    background: var(--c-ink);
+    color: var(--c-surface);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.7rem 0.35rem 0.5rem;
+    border: 2px solid var(--c-ink);
+    background: var(--c-canvas);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition:
+      transform 120ms var(--step),
+      background-color 120ms var(--step);
+  }
+  li:hover {
+    transform: translateY(-2px);
+    background: var(--c-primary);
+    color: var(--c-on-primary);
+  }
+  .slot {
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--c-primary);
+    border: 2px solid var(--c-ink);
+    flex: none;
+  }
+  li:hover .slot {
+    background: var(--c-on-primary);
+  }
+</style>

@@ -1,0 +1,8 @@
+---
+import HomePage from "../../ui/HomePage.astro";
+import { loadContent } from "../_load-content";
+
+const content = await loadContent("es");
+---
+
+<HomePage locale="es" content={content} />

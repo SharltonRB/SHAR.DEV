@@ -17,7 +17,10 @@
       "!!.specify",
       "!!.agents",
       "!!.claude",
-      "!pnpm-lock.yaml"
+      "!pnpm-lock.yaml",
+      "!!public/brand",
+      "!!public/lottie",
+      "!!public/favicon.svg"
     ]
   },
   "formatter": {

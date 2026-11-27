@@ -21,3 +21,6 @@ test-results/
 # OS / editor
 .DS_Store
 *.log
+
+# browser automation captures
+.playwright-mcp/

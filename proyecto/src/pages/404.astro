@@ -1,0 +1,56 @@
+---
+import { ui } from "../i18n/ui";
+import Layout from "../ui/Layout.astro";
+
+const en = ui.en.notFound;
+const es = ui.es.notFound;
+---
+
+<Layout locale="en" title={en.metaTitle} description={en.text}>
+  <main class="nf">
+    <div class="window nf-window">
+      <div class="window-bar">
+        <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span>GET /???</span>
+      </div>
+      <div class="nf-body">
+        <h1>{en.title}<span class="cursor" aria-hidden="true"></span></h1>
+        <p>{en.text}</p>
+        <p lang="es" class="es">{es.title}. {es.text}</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="/">{en.back}</a>
+          <a class="btn btn-secondary" href="/es/" lang="es">{es.back}</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .nf {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+  }
+  .nf-window {
+    width: min(100%, 40rem);
+  }
+  .nf-body {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+  }
+  h1 {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+  }
+  .es {
+    color: var(--c-ink-soft);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+</style>

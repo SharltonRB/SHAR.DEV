@@ -1,0 +1,314 @@
+/* SHAR.DEV brand tokens: light 60-30-10 (orange, ink, cyan) and dark
+   orange-only 60-30-10 (orange, fog grey, ember orange). Only brand colors. */
+:root {
+  color-scheme: light;
+  --c-primary: #ff6b35;
+  --c-primary-dark: #c2410c;
+  --c-primary-soft: #ffe4d6;
+  --c-ink: #0a0a0a;
+  --c-ink-soft: #3f3f46;
+  --c-accent: #22d3ee;
+  --c-link: #0e7490;
+  --c-canvas: #fafafa;
+  --c-surface: #ffffff;
+  --c-on-primary: #0a0a0a;
+  --c-grid: rgb(10 10 10 / 0.06);
+  --c-shadow: #0a0a0a;
+  --c-chrome: #0a0a0a; /* navbar text and footer background */
+  --c-on-chrome: #fafafa;
+  --c-focus: #22d3ee;
+
+  --font-display: "Handjet", "Courier New", monospace;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+
+  --border: 3px solid var(--c-ink);
+  --shadow: 6px 6px 0 var(--c-shadow);
+  --shadow-sm: 4px 4px 0 var(--c-shadow);
+  --gap: clamp(1rem, 2.5vw, 1.5rem);
+  --section-space: clamp(4rem, 9vw, 7rem);
+  --max: 72rem;
+  --step: steps(4, end);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-ink: #d4d4d8;
+  --c-ink-soft: #a1a1aa;
+  --c-accent: #ff9a5c;
+  --c-link: #ff9a5c;
+  --c-primary-soft: #2a1308;
+  --c-canvas: #0a0a0a;
+  --c-surface: #111111;
+  --c-grid: rgb(255 107 53 / 0.07);
+  --c-shadow: #c2410c;
+  --c-chrome: #111111;
+  --c-on-chrome: #d4d4d8;
+  --c-focus: #ff9a5c;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font: 400 1rem / 1.6 var(--font-body);
+  color: var(--c-ink);
+  background-color: var(--c-canvas);
+  background-image:
+    linear-gradient(var(--c-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  overflow-x: hidden;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--c-link);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  font-weight: 700;
+  border: var(--border);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+.container {
+  width: min(100% - 2rem, var(--max));
+  margin-inline: auto;
+}
+
+/* Sections */
+.section {
+  padding-block: var(--section-space);
+}
+
+.section-head {
+  display: flex;
+  align-items: end;
+  gap: 1rem;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  flex-wrap: wrap;
+}
+
+.section-title {
+  font-size: clamp(2.5rem, 6vw, 3.75rem);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.15em;
+}
+.section-title::before {
+  content: "";
+  width: 0.42em;
+  height: 0.42em;
+  background: var(--c-primary);
+  transform: rotate(45deg);
+  margin-right: 0.35em;
+  align-self: center;
+  flex: none;
+}
+
+.section-intro {
+  max-width: 46ch;
+  color: var(--c-ink-soft);
+  font-size: 1.0625rem;
+}
+
+/* Buttons */
+.btn {
+  --press: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.875rem;
+  padding: 0.55rem 1.25rem 0.45rem;
+  font: 600 1.375rem / 1 var(--font-display);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition:
+    transform 160ms var(--step),
+    box-shadow 160ms var(--step);
+}
+.btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--c-shadow);
+}
+.btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--c-shadow);
+}
+.btn-primary {
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+}
+.btn-secondary {
+  background: var(--c-surface);
+  color: var(--c-ink);
+}
+.btn svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+}
+
+/* Panels: the terminal window frame used across the page */
+.window {
+  background: var(--c-surface);
+  border: var(--border);
+  box-shadow: var(--shadow);
+}
+.window-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0.85rem;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  border-bottom: var(--border);
+  font: 600 1.25rem / 1 var(--font-display);
+  letter-spacing: 0.04em;
+}
+.window-dots {
+  display: flex;
+  gap: 0.35rem;
+}
+.window-dots span {
+  width: 0.7rem;
+  height: 0.7rem;
+  background: var(--c-on-primary);
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.chip {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 2px solid var(--c-ink);
+  background: var(--c-canvas);
+  color: var(--c-ink);
+}
+
+/* Blinking terminal cursor */
+.cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.12em;
+  margin-left: 0.08em;
+  background: currentColor;
+  vertical-align: baseline;
+  animation: blink 1s steps(1, end) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Pixel reveal on scroll: blocks appear in four steps */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  clip-path: inset(0 0 100% 0);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0);
+  transition:
+    opacity 480ms steps(4, end),
+    transform 480ms steps(4, end),
+    clip-path 560ms steps(6, end);
+  transition-delay: var(--delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}
+
+/* Without JavaScript nothing stays hidden */
+.no-js .reveal {
+  opacity: 1;
+  transform: none;
+  clip-path: none;
+}

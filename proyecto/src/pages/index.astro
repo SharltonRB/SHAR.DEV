@@ -1,14 +1,8 @@
 ---
-// Temporary placeholder; replaced by feature 6 (public site).
+import HomePage from "../ui/HomePage.astro";
+import { loadContent } from "./_load-content";
+
+const content = await loadContent("en");
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SHAR.DEV</title>
-  </head>
-  <body>
-    <p>Coming soon</p>
-  </body>
-</html>
+<HomePage locale="en" content={content} />

@@ -1,0 +1,89 @@
+---
+import type { PublishedContent } from "../content";
+import type { UiStrings } from "../i18n/ui";
+import PixelIcon from "./PixelIcon.astro";
+
+interface Props {
+  contact: PublishedContent["contact"];
+  name: string;
+  t: UiStrings;
+}
+
+const { contact, name, t } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div>
+      <p class="tagline">{t.footer.tagline}<span class="cursor" aria-hidden="true"></span></p>
+      <p class="copy">© {year} {name} · SHAR.DEV</p>
+    </div>
+    <ul class="social">
+      {
+        contact.linkedinUrl && (
+          <li>
+            <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={t.contact.linkedin}>
+              <PixelIcon name="linkedin" />
+            </a>
+          </li>
+        )
+      }
+      {
+        contact.githubUrl && (
+          <li>
+            <a href={contact.githubUrl} target="_blank" rel="noopener noreferrer" aria-label={t.contact.github}>
+              <PixelIcon name="github" />
+            </a>
+          </li>
+        )
+      }
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--c-chrome);
+    color: var(--c-on-chrome);
+    border-top: 6px solid var(--c-primary);
+    padding-block: 2.5rem 6rem;
+  }
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .tagline {
+    font: 600 clamp(2rem, 5vw, 2.75rem) / 1 var(--font-display);
+    color: var(--c-primary);
+  }
+  .copy {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    opacity: 0.85;
+  }
+  .social {
+    display: flex;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.3rem;
+    color: var(--c-on-chrome);
+    border: 2px solid currentColor;
+  }
+  .social a:hover {
+    color: var(--c-on-primary);
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+  }
+</style>
