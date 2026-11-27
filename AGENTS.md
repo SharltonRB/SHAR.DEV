@@ -30,7 +30,7 @@ Al instalar, fija versiones exactas con al menos dos semanas de antigüedad. Ant
 
 ## Comandos
 
-Node 24 y pnpm 11.28.10 (fijado en `packageManager`).
+Node 24 y pnpm 11.28.10 (fijado en `packageManager`). La app vive en `proyecto/` (regla de entrega del curso): ejecuta los comandos desde ahí; `docs/`, `specs/` y `.github/` siguen en la raíz.
 
 ```bash
 pnpm install
