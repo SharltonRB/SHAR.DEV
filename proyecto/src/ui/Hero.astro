@@ -33,7 +33,8 @@ const { profile, t, mailto, cvHref } = Astro.props;
           </p>
           {profile.headline && <p class="headline">{profile.headline}</p>}
           <div class="actions">
-            <a class="btn btn-primary" href={mailto}>{t.startMission}</a>
+            <a class="btn btn-primary" href="#projects">{t.viewProjects}</a>
+            <a class="btn btn-secondary" href={mailto}>{t.startMission}</a>
             <a class="btn btn-secondary" href={cvHref} download>
               <PixelIcon name="download" />
               {t.downloadCv}
@@ -132,7 +133,7 @@ const { profile, t, mailto, cvHref } = Astro.props;
     width: min(100%, 15rem);
     height: auto;
     filter: drop-shadow(8px 8px 0 var(--c-shadow));
-    animation: float 3.2s steps(4, end) infinite alternate;
+    animation: float 3.2s ease-in-out infinite alternate;
   }
   @keyframes float {
     to {

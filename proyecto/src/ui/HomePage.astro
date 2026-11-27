@@ -29,10 +29,10 @@ const cvHref = "/cv/Sharlton-Romero-CV.pdf";
   <Navbar locale={locale} t={t} mailto={mailto} />
   <main id="main" tabindex="-1">
     <Hero profile={content.profile} t={t} mailto={mailto} cvHref={cvHref} />
-    <About profile={content.profile} values={content.values} t={t} />
+    <Projects projects={content.projects} t={t} />
     <Experience experience={content.experience} locale={locale} t={t} />
     <Skills skillCategories={content.skillCategories} t={t} />
-    <Projects projects={content.projects} t={t} />
+    <About profile={content.profile} values={content.values} t={t} />
     <Contact contact={content.contact} locale={locale} t={t} mailto={mailto} whatsappHref={whatsappHref} />
   </main>
   <Footer contact={content.contact} name={content.profile.name} t={t} />
@@ -53,8 +53,16 @@ const cvHref = "/cv/Sharlton-Romero-CV.pdf";
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
+          const el = entry.target as HTMLElement;
+          observer.unobserve(el);
+          el.classList.add("is-visible");
+          // Once played, drop the reveal classes so it never animates again.
+          const done = (e: TransitionEvent) => {
+            if (e.target !== el || e.propertyName !== "transform") return;
+            el.classList.remove("reveal", "is-visible");
+            el.removeEventListener("transitionend", done);
+          };
+          el.addEventListener("transitionend", done);
         }
       },
       { rootMargin: "0px 0px -8% 0px" },

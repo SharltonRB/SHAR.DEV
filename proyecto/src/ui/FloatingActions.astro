@@ -45,8 +45,8 @@ const { t, whatsappHref } = Astro.props;
     text-decoration: none;
     cursor: pointer;
     transition:
-      transform 160ms var(--step),
-      box-shadow 160ms var(--step);
+      transform 160ms var(--ease-out),
+      box-shadow 160ms var(--ease-out);
   }
   .fab:hover {
     transform: translate(2px, 2px);
@@ -57,7 +57,7 @@ const { t, whatsappHref } = Astro.props;
     padding: 0;
     color: var(--c-ink);
     background: var(--c-surface);
-    animation: pop-in 200ms steps(3, end);
+    animation: pop-in 260ms var(--ease-out);
   }
   .top[hidden] {
     display: none;
