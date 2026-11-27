@@ -2,6 +2,7 @@
 import type { Locale, PublishedContent } from "../content";
 import { formatMonth, type UiStrings } from "../i18n/ui";
 import PixelIcon from "./PixelIcon.astro";
+import TechIcon from "./TechIcon.astro";
 
 interface Props {
   experience: PublishedContent["experience"];
@@ -62,7 +63,7 @@ const TOP_TECH = 6;
                     {job.achievements[0] && <p class="summary">{job.achievements[0]}</p>}
                     <h4 class="visually-hidden">{t.experience.stack}</h4>
                     <ul class="chip-list">
-                      {job.technologies.slice(0, TOP_TECH).map((tech) => <li class="chip">{tech}</li>)}
+                      {job.technologies.slice(0, TOP_TECH).map((tech) => <li class="chip"><TechIcon name={tech} />{tech}</li>)}
                     </ul>
                   </div>
                 </article>

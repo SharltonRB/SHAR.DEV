@@ -2,6 +2,7 @@
 import type { PublishedContent } from "../content";
 import type { UiStrings } from "../i18n/ui";
 import PixelIcon from "./PixelIcon.astro";
+import TechIcon from "./TechIcon.astro";
 
 interface Props {
   projects: PublishedContent["projects"];
@@ -64,6 +65,7 @@ function cover(title: string) {
           </button>
           {filters.map((tech) => (
             <button type="button" class="filter" aria-pressed="false" data-filter={tech}>
+              <TechIcon name={tech} />
               {tech}
             </button>
           ))}
@@ -92,7 +94,10 @@ function cover(title: string) {
                 <p class="description">{p.description}</p>
                 <ul class="chip-list">
                   {p.technologies.map((tech) => (
-                    <li class="chip">{tech}</li>
+                    <li class="chip">
+                      <TechIcon name={tech} />
+                      {tech}
+                    </li>
                   ))}
                 </ul>
                 <div class="card-actions">
@@ -134,7 +139,10 @@ function cover(title: string) {
                 <p>{p.description}</p>
                 <ul class="chip-list">
                   {p.technologies.map((tech) => (
-                    <li class="chip">{tech}</li>
+                    <li class="chip">
+                      <TechIcon name={tech} />
+                      {tech}
+                    </li>
                   ))}
                 </ul>
                 {(p.codeUrl || p.demoUrl) && (
@@ -189,7 +197,10 @@ function cover(title: string) {
                       <p class="description">{p.description}</p>
                       <ul class="chip-list">
                         {p.technologies.map((tech) => (
-                          <li class="chip">{tech}</li>
+                          <li class="chip">
+                      <TechIcon name={tech} />
+                      {tech}
+                    </li>
                         ))}
                       </ul>
                       <div class="card-actions">
@@ -218,7 +229,10 @@ function cover(title: string) {
                       <p>{p.description}</p>
                       <ul class="chip-list">
                         {p.technologies.map((tech) => (
-                          <li class="chip">{tech}</li>
+                          <li class="chip">
+                      <TechIcon name={tech} />
+                      {tech}
+                    </li>
                         ))}
                       </ul>
                       {(p.codeUrl || p.demoUrl) && (
@@ -307,6 +321,9 @@ function cover(title: string) {
     margin-bottom: 2rem;
   }
   .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     min-height: 2.75rem;
     padding: 0.4rem 0.9rem;
     font: 500 0.9375rem / 1 var(--font-body);

@@ -1,0 +1,22 @@
+---
+import { techIcon } from "./tech-icons";
+
+interface Props {
+  name: string;
+}
+
+const { runs, viewBox } = techIcon(Astro.props.name);
+---
+
+<svg
+  class="tech-icon"
+  viewBox={viewBox}
+  width="16"
+  height="16"
+  fill="currentColor"
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+  focusable="false"
+>
+  {runs.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" />)}
+</svg>

@@ -262,7 +262,9 @@ a {
   list-style: none;
 }
 .chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.2rem 0.6rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -327,4 +329,11 @@ a {
 .no-js .reveal {
   opacity: 1;
   transform: none;
+}
+
+/* Pixel technology marks sit before the name, in the text color. */
+.tech-icon {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
 }
