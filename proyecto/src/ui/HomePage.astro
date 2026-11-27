@@ -29,10 +29,10 @@ const cvHref = "/cv/Sharlton-Romero-CV.pdf";
   <Navbar locale={locale} t={t} mailto={mailto} />
   <main id="main" tabindex="-1">
     <Hero profile={content.profile} t={t} mailto={mailto} cvHref={cvHref} />
-    <Projects projects={content.projects} t={t} />
-    <Experience experience={content.experience} locale={locale} t={t} />
-    <Skills skillCategories={content.skillCategories} t={t} />
     <About profile={content.profile} values={content.values} t={t} />
+    <Skills skillCategories={content.skillCategories} t={t} />
+    <Experience experience={content.experience} locale={locale} t={t} cvHref={cvHref} />
+    <Projects projects={content.projects} t={t} />
     <Contact contact={content.contact} locale={locale} t={t} mailto={mailto} whatsappHref={whatsappHref} />
   </main>
   <Footer contact={content.contact} name={content.profile.name} t={t} />

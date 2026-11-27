@@ -36,6 +36,8 @@ export const ui = {
       current: "Current role",
       achievements: "Highlights",
       stack: "Stack",
+      cvNote:
+        "This is the short version. Achievements, education and certifications are in my CV.",
     },
     skills: {
       title: "Skills",
@@ -128,6 +130,8 @@ export const ui = {
       current: "Puesto actual",
       achievements: "Logros",
       stack: "Tecnologías",
+      cvNote:
+        "Esta es la versión corta. Logros, formación y certificaciones están en mi CV.",
     },
     skills: {
       title: "Habilidades",

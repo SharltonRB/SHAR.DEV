@@ -23,6 +23,7 @@ const { profile, t, mailto, cvHref } = Astro.props;
 
       <div class="hero-body">
         <div class="hero-text">
+          <p class="prompt" aria-hidden="true"><span>$</span> whoami</p>
           <p class="badge">{profile.title}</p>
           <h1 id="hero-title">
             <span class="hello">{t.hello}</span>
@@ -59,7 +60,22 @@ const { profile, t, mailto, cvHref } = Astro.props;
 
 <style>
   .hero {
-    padding-block: clamp(2rem, 6vw, 4.5rem) clamp(3rem, 7vw, 5rem);
+    display: grid;
+    align-items: center;
+    min-height: calc(100svh - 4.25rem);
+    padding-block: clamp(1.5rem, 4vw, 3rem);
+  }
+  .prompt {
+    margin-bottom: 1rem;
+    font: 600 1.5rem / 1 var(--font-display);
+    letter-spacing: 0.04em;
+    color: var(--c-ink-soft);
+  }
+  .prompt span {
+    color: var(--c-ink);
+  }
+  :global([data-theme="dark"]) .prompt span {
+    color: var(--c-primary);
   }
   .bar-title {
     font-size: 1.125rem;
@@ -94,7 +110,7 @@ const { profile, t, mailto, cvHref } = Astro.props;
   }
   .name {
     display: block;
-    font-size: clamp(3.25rem, 9vw, 6rem);
+    font-size: clamp(3.5rem, 10vw, 7rem);
     line-height: 0.95;
   }
   .slogan {

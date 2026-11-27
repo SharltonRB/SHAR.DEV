@@ -12,10 +12,10 @@ interface Props {
 const { locale, t, mailto } = Astro.props;
 const home = homePath[locale];
 const links = [
-  { id: "projects", label: t.nav.projects },
-  { id: "experience", label: t.nav.experience },
-  { id: "skills", label: t.nav.skills },
   { id: "about", label: t.nav.about },
+  { id: "skills", label: t.nav.skills },
+  { id: "experience", label: t.nav.experience },
+  { id: "projects", label: t.nav.projects },
   { id: "contact", label: t.nav.contact },
 ];
 ---
