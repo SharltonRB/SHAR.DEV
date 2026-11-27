@@ -21,14 +21,23 @@ const { locale, content } = Astro.props;
 const t = ui[locale];
 const mailto = `mailto:${content.contact.email}?subject=${encodeURIComponent(t.mailSubject)}`;
 const whatsappHref = `https://wa.me/${content.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(t.whatsappText)}`;
-const cvHref = "/cv/Sharlton-Romero-CV.pdf";
+const cvHref =
+  locale === "es"
+    ? "/cv/Sharlton-Romero-CV-ES.pdf"
+    : "/cv/Sharlton-Romero-CV.pdf";
 ---
 
 <Layout locale={locale} title={t.metaTitle} description={t.metaDescription} alternates>
   <a class="skip-link" href="#main">{t.skipToContent}</a>
   <Navbar locale={locale} t={t} mailto={mailto} />
   <main id="main" tabindex="-1">
-    <Hero profile={content.profile} t={t} mailto={mailto} cvHref={cvHref} />
+    <Hero
+      profile={content.profile}
+      t={t}
+      mailto={mailto}
+      cvHref={cvHref}
+      linkedinUrl={content.contact.linkedinUrl}
+    />
     <About profile={content.profile} values={content.values} t={t} />
     <Skills skillCategories={content.skillCategories} t={t} />
     <Experience experience={content.experience} locale={locale} t={t} cvHref={cvHref} />

@@ -31,6 +31,8 @@ export const ui = {
       "status: ready to ship",
     ],
     liveLog: "live requests",
+    photoAlt: "Portrait of Sharlton Romero",
+    photoLink: "Sharlton Romero on LinkedIn",
     about: {
       title: "About",
       mission: "Mission",
@@ -135,6 +137,8 @@ export const ui = {
       "estado: listo para desplegar",
     ],
     liveLog: "peticiones en vivo",
+    photoAlt: "Foto de Sharlton Romero",
+    photoLink: "Sharlton Romero en LinkedIn",
     about: {
       title: "Sobre mí",
       mission: "Misión",

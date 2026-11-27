@@ -8,9 +8,10 @@ interface Props {
   t: UiStrings;
   mailto: string;
   cvHref: string;
+  linkedinUrl: string | null;
 }
 
-const { profile, t, mailto, cvHref } = Astro.props;
+const { profile, t, mailto, cvHref, linkedinUrl } = Astro.props;
 
 // The name rises letter by letter: first word in light ink, the rest orange.
 const [first, ...rest] = profile.name.split(" ");
@@ -87,18 +88,44 @@ const seedLog = [
           </div>
         </div>
 
-        <div class="hero-art" aria-hidden="true" data-parallax>
-          <span class="diamond d1"></span>
-          <span class="diamond d2"></span>
-          <span class="diamond d3"></span>
+        <div class="hero-art" data-parallax>
+          <span class="diamond d1" aria-hidden="true"></span>
+          <span class="diamond d2" aria-hidden="true"></span>
+          <span class="diamond d3" aria-hidden="true"></span>
           <div class="logo-wrap">
-            <img class="logo" src="/brand/shardev-logo.svg" alt="" width="220" height="220" />
+            {
+              linkedinUrl ? (
+                <a class="photo" href={linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={t.photoLink}>
+                  <span class="photo-bar" aria-hidden="true">
+                    <span>sharlton.jpg</span>
+                    <PixelIcon name="linkedin" />
+                  </span>
+                  <span class="photo-frame">
+                    <img class="portrait" src="/brand/sharlton.jpg" alt={t.photoAlt} width="588" height="640" />
+                    <span class="photo-overlay" aria-hidden="true">
+                      <PixelIcon name="linkedin" class="overlay-icon" />
+                      <span>{t.contact.linkedin}</span>
+                    </span>
+                  </span>
+                </a>
+              ) : (
+                <div class="photo">
+                  <span class="photo-bar" aria-hidden="true">
+                    <span>sharlton.jpg</span>
+                  </span>
+                  <span class="photo-frame">
+                    <img class="portrait" src="/brand/sharlton.jpg" alt={t.photoAlt} width="588" height="640" />
+                  </span>
+                </div>
+              )
+            }
+            <img class="logo badge-logo" src="/brand/shardev-logo.svg" alt="" width="220" height="220" aria-hidden="true" />
           </div>
-          <div class="status">
+          <div class="status" aria-hidden="true">
             <div class="lottie" data-lottie="/lottie/loading.json"></div>
             <p class="status-text">{t.status}</p>
           </div>
-          <div class="log">
+          <div class="log" aria-hidden="true">
             <p class="log-head"><span class="live-dot"></span>{t.liveLog}</p>
             <ul data-log>
               {
@@ -320,8 +347,88 @@ const seedLog = [
     transform: translate3d(calc(var(--px) * 14px), calc(var(--py) * 14px), 0);
     transition: transform 400ms var(--ease-out);
   }
+  .logo-wrap {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .photo {
+    display: block;
+    width: clamp(14rem, 17vw, 24rem);
+    max-width: 100%;
+    color: inherit;
+    text-decoration: none;
+    background: var(--c-surface);
+    border: var(--border);
+    box-shadow: calc(8px - var(--px) * 6px) calc(8px - var(--py) * 6px) 0 var(--c-shadow);
+  }
+  :global([data-theme="dark"]) .photo {
+    border-color: var(--c-primary);
+  }
+  .photo-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.35rem 0.65rem;
+    background: var(--c-primary);
+    color: var(--c-on-primary);
+    border-bottom: var(--border);
+    font: 600 1.125rem / 1 var(--font-display);
+    letter-spacing: 0.04em;
+  }
+  .photo-frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 588 / 640;
+  }
+  .portrait {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition:
+      filter 320ms var(--ease-out),
+      transform 420ms var(--ease-out);
+  }
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.6rem;
+    color: #fafafa;
+    font: 600 1.75rem / 1 var(--font-display);
+    letter-spacing: 0.06em;
+    opacity: 0;
+    transition: opacity 260ms var(--ease-out);
+  }
+  .photo-overlay :global(.overlay-icon) {
+    width: 4rem;
+    height: 4rem;
+    padding: 0.6rem;
+    color: var(--c-on-primary);
+    background: var(--c-primary);
+    box-shadow: 5px 5px 0 #0a0a0a;
+  }
+  a.photo:hover .portrait,
+  a.photo:focus-visible .portrait {
+    filter: blur(4px) brightness(0.5);
+    transform: scale(1.05);
+  }
+  a.photo:hover .photo-overlay,
+  a.photo:focus-visible .photo-overlay {
+    opacity: 1;
+  }
+  .badge-logo {
+    position: absolute;
+    right: -1.75rem;
+    bottom: -1.75rem;
+  }
   .logo {
-    width: min(100%, clamp(13.5rem, 16vw, 26rem));
+    width: clamp(4.5rem, 5.5vw, 7rem);
     height: auto;
     filter: drop-shadow(calc(8px - var(--px) * 6px) calc(8px - var(--py) * 6px) 0 var(--c-shadow));
     animation: float 3.2s ease-in-out infinite alternate;
@@ -454,8 +561,12 @@ const seedLog = [
     .hero-body {
       grid-template-columns: 1fr;
     }
-    .logo {
-      width: 9rem;
+    .photo {
+      width: 15rem;
+    }
+    .badge-logo {
+      right: -1rem;
+      bottom: -1rem;
     }
     .actions .btn {
       flex: 1 1 12rem;
