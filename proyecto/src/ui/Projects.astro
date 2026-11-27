@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { projects, t } = Astro.props;
+const [featured, ...others] = projects;
 
 // Filters: every technology used by a project, most used first.
 const counts = new Map<string, number>();
@@ -47,7 +48,7 @@ function cover(title: string) {
 ---
 
 {
-  projects.length > 0 && (
+  featured && (
     <section id="projects" class="section projects-band" aria-labelledby="projects-title">
       <div class="container">
         <div class="section-head reveal">
@@ -68,101 +69,197 @@ function cover(title: string) {
           ))}
         </div>
 
-        <ul class="gallery" data-gallery>
-          {projects.map((p, i) => {
-            const featured = i === 0;
-            return (
-              <li
-                class:list={["project", "reveal", { featured }]}
-                style={`--delay: ${(i % 3) * 90}ms`}
-                data-techs={JSON.stringify(p.technologies)}
-              >
-                <article class="window project-card">
-                  <div class="cover" aria-hidden="true">
-                    <svg viewBox="0 0 28 18" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid meet">
-                      <rect width="28" height="18" class="cover-bg" />
-                      <rect x="0" y="0" width="28" height="2" class="cover-bar" />
-                      <rect x="1" y="0.5" width="1" height="1" class="cover-dot" />
-                      <rect x="2.5" y="0.5" width="1" height="1" class="cover-dot" />
-                      <rect x="4" y="0.5" width="1" height="1" class="cover-dot" />
-                      {cover(p.title).map((l) => (
-                        <rect x={l.x} y={l.y} width={l.w} height="1" class={l.accent ? "cover-accent" : "cover-line"} />
-                      ))}
-                      <rect x="3" y="16" width="2" height="1" class="cover-cursor" />
-                    </svg>
-                  </div>
-                  <div class="project-body">
-                    {featured && <p class="featured-label">{t.projects.featured}</p>}
-                    <h3>{p.title}</h3>
-                    {featured && <p class="description">{p.description}</p>}
-                    <ul class="chip-list">
-                      {p.technologies.map((tech) => (
-                        <li class="chip">{tech}</li>
-                      ))}
-                    </ul>
-                    <div class="card-actions">
-                      {featured && p.codeUrl && (
-                        <a class="btn btn-primary" href={p.codeUrl} target="_blank" rel="noopener noreferrer">
-                          <PixelIcon name="code" />
-                          {t.projects.code}
-                        </a>
-                      )}
-                      {featured && p.demoUrl && (
-                        <a class="btn btn-secondary" href={p.demoUrl} target="_blank" rel="noopener noreferrer">
-                          <PixelIcon name="external" />
-                          {t.projects.demo}
-                        </a>
-                      )}
-                      <button type="button" class="btn btn-secondary" data-open={`project-${i}`}>
-                        {t.projects.details}
-                      </button>
-                    </div>
-                  </div>
-                </article>
-
-                <dialog class="window modal" id={`project-${i}`} aria-labelledby={`project-${i}-title`}>
-                  <div class="window-bar">
-                    <div class="window-dots" aria-hidden="true">
-                      <span />
-                      <span />
-                      <span />
-                    </div>
-                    <form method="dialog">
-                      <button class="close" aria-label={t.projects.close}>
-                        <PixelIcon name="close" />
-                      </button>
-                    </form>
-                  </div>
-                  <div class="modal-body">
-                    <h3 id={`project-${i}-title`}>{p.title}</h3>
-                    <p>{p.description}</p>
-                    <ul class="chip-list">
-                      {p.technologies.map((tech) => (
-                        <li class="chip">{tech}</li>
-                      ))}
-                    </ul>
-                    {(p.codeUrl || p.demoUrl) && (
-                      <div class="links">
-                        {p.codeUrl && (
-                          <a class="btn btn-primary" href={p.codeUrl} target="_blank" rel="noopener noreferrer">
-                            <PixelIcon name="code" />
-                            {t.projects.code}
-                          </a>
-                        )}
-                        {p.demoUrl && (
-                          <a class="btn btn-secondary" href={p.demoUrl} target="_blank" rel="noopener noreferrer">
-                            <PixelIcon name="external" />
-                            {t.projects.demo}
-                          </a>
-                        )}
-                      </div>
+        {projects.map((p, i) => {
+          const isFeatured = i === 0;
+          const card = (
+            <article class="window project-card">
+              <div class="cover" aria-hidden="true">
+                <svg viewBox="0 0 28 18" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid meet">
+                  <rect width="28" height="18" class="cover-bg" />
+                  <rect x="0" y="0" width="28" height="2" class="cover-bar" />
+                  <rect x="1" y="0.5" width="1" height="1" class="cover-dot" />
+                  <rect x="2.5" y="0.5" width="1" height="1" class="cover-dot" />
+                  <rect x="4" y="0.5" width="1" height="1" class="cover-dot" />
+                  {cover(p.title).map((l) => (
+                    <rect x={l.x} y={l.y} width={l.w} height="1" class={l.accent ? "cover-accent" : "cover-line"} />
+                  ))}
+                  <rect x="3" y="16" width="2" height="1" class="cover-cursor" />
+                </svg>
+              </div>
+              <div class="project-body">
+                {isFeatured && <p class="featured-label">{t.projects.featured}</p>}
+                <h3>{p.title}</h3>
+                <p class="description">{p.description}</p>
+                <ul class="chip-list">
+                  {p.technologies.map((tech) => (
+                    <li class="chip">{tech}</li>
+                  ))}
+                </ul>
+                <div class="card-actions">
+                  {isFeatured && p.codeUrl && (
+                    <a class="btn btn-primary" href={p.codeUrl} target="_blank" rel="noopener noreferrer">
+                      <PixelIcon name="code" />
+                      {t.projects.code}
+                    </a>
+                  )}
+                  {isFeatured && p.demoUrl && (
+                    <a class="btn btn-secondary" href={p.demoUrl} target="_blank" rel="noopener noreferrer">
+                      <PixelIcon name="external" />
+                      {t.projects.demo}
+                    </a>
+                  )}
+                  <button type="button" class="btn btn-secondary" data-open={`project-${i}`}>
+                    {t.projects.details}
+                  </button>
+                </div>
+              </div>
+            </article>
+          );
+          const dialog = (
+            <dialog class="window modal" id={`project-${i}`} aria-labelledby={`project-${i}-title`}>
+              <div class="window-bar">
+                <div class="window-dots" aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <form method="dialog">
+                  <button class="close" aria-label={t.projects.close}>
+                    <PixelIcon name="close" />
+                  </button>
+                </form>
+              </div>
+              <div class="modal-body">
+                <h3 id={`project-${i}-title`}>{p.title}</h3>
+                <p>{p.description}</p>
+                <ul class="chip-list">
+                  {p.technologies.map((tech) => (
+                    <li class="chip">{tech}</li>
+                  ))}
+                </ul>
+                {(p.codeUrl || p.demoUrl) && (
+                  <div class="links">
+                    {p.codeUrl && (
+                      <a class="btn btn-primary" href={p.codeUrl} target="_blank" rel="noopener noreferrer">
+                        <PixelIcon name="code" />
+                        {t.projects.code}
+                      </a>
+                    )}
+                    {p.demoUrl && (
+                      <a class="btn btn-secondary" href={p.demoUrl} target="_blank" rel="noopener noreferrer">
+                        <PixelIcon name="external" />
+                        {t.projects.demo}
+                      </a>
                     )}
                   </div>
-                </dialog>
-              </li>
-            );
-          })}
-        </ul>
+                )}
+              </div>
+            </dialog>
+          );
+          return isFeatured ? (
+            <div class="featured reveal" data-item data-techs={JSON.stringify(p.technologies)}>
+              {card}
+              {dialog}
+            </div>
+          ) : null;
+        })}
+
+        {others.length > 0 && (
+          <ul class="gallery" data-gallery>
+            {others.map((p, j) => {
+              const i = j + 1;
+              return (
+                <li class="tile" data-item data-techs={JSON.stringify(p.technologies)}>
+                  <article class="window project-card">
+                    <div class="cover" aria-hidden="true">
+                      <svg viewBox="0 0 28 18" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid meet">
+                        <rect width="28" height="18" class="cover-bg" />
+                        <rect x="0" y="0" width="28" height="2" class="cover-bar" />
+                        <rect x="1" y="0.5" width="1" height="1" class="cover-dot" />
+                        <rect x="2.5" y="0.5" width="1" height="1" class="cover-dot" />
+                        <rect x="4" y="0.5" width="1" height="1" class="cover-dot" />
+                        {cover(p.title).map((l) => (
+                          <rect x={l.x} y={l.y} width={l.w} height="1" class={l.accent ? "cover-accent" : "cover-line"} />
+                        ))}
+                        <rect x="3" y="16" width="2" height="1" class="cover-cursor" />
+                      </svg>
+                    </div>
+                    <div class="project-body">
+                      <h3>{p.title}</h3>
+                      <p class="description">{p.description}</p>
+                      <ul class="chip-list">
+                        {p.technologies.map((tech) => (
+                          <li class="chip">{tech}</li>
+                        ))}
+                      </ul>
+                      <div class="card-actions">
+                        <button type="button" class="btn btn-secondary" data-open={`project-${i}`}>
+                          {t.projects.details}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+
+                  <dialog class="window modal" id={`project-${i}`} aria-labelledby={`project-${i}-title`}>
+                    <div class="window-bar">
+                      <div class="window-dots" aria-hidden="true">
+                        <span />
+                        <span />
+                        <span />
+                      </div>
+                      <form method="dialog">
+                        <button class="close" aria-label={t.projects.close}>
+                          <PixelIcon name="close" />
+                        </button>
+                      </form>
+                    </div>
+                    <div class="modal-body">
+                      <h3 id={`project-${i}-title`}>{p.title}</h3>
+                      <p>{p.description}</p>
+                      <ul class="chip-list">
+                        {p.technologies.map((tech) => (
+                          <li class="chip">{tech}</li>
+                        ))}
+                      </ul>
+                      {(p.codeUrl || p.demoUrl) && (
+                        <div class="links">
+                          {p.codeUrl && (
+                            <a class="btn btn-primary" href={p.codeUrl} target="_blank" rel="noopener noreferrer">
+                              <PixelIcon name="code" />
+                              {t.projects.code}
+                            </a>
+                          )}
+                          {p.demoUrl && (
+                            <a class="btn btn-secondary" href={p.demoUrl} target="_blank" rel="noopener noreferrer">
+                              <PixelIcon name="external" />
+                              {t.projects.demo}
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </dialog>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <nav class="pager" aria-label={t.projects.pages} hidden data-pager>
+          <button type="button" class="btn btn-secondary pager-btn" data-prev>
+            <span aria-hidden="true">◀</span>
+            {t.projects.prev}
+          </button>
+          <div class="pager-mid">
+            <p class="pager-count" aria-live="polite" data-count data-template={t.projects.pageOf}></p>
+            <div class="dots" aria-hidden="true" data-dots></div>
+          </div>
+          <button type="button" class="btn btn-secondary pager-btn" data-next>
+            {t.projects.next}
+            <span aria-hidden="true">▶</span>
+          </button>
+        </nav>
+
         <p class="empty" hidden data-empty>
           {t.projects.empty}
         </p>
@@ -173,7 +270,7 @@ function cover(title: string) {
 
 <style>
   /* Dark band in both themes so the projects are the focal point. The dark
-     brand tokens are redefined locally; the dialog inherits them too. */
+     brand tokens are redefined locally; the dialogs inherit them too. */
   .projects-band {
     --c-ink: #d4d4d8;
     --c-ink-soft: #a1a1aa;
@@ -227,17 +324,11 @@ function cover(title: string) {
     color: var(--c-on-primary);
     border-color: var(--c-primary);
   }
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
-    gap: 2rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .project[hidden] {
+  [data-item][hidden] {
     display: none;
   }
+
+  /* Shared card */
   .project-card {
     height: 100%;
     display: flex;
@@ -282,13 +373,17 @@ function cover(title: string) {
   }
   .project-body {
     display: grid;
-    gap: 1rem;
+    gap: 0.9rem;
     align-content: start;
     flex: 1;
     padding: 1.25rem 1.25rem 1.5rem;
   }
   .project-body h3 {
-    font-size: 2rem;
+    font-size: 1.875rem;
+  }
+  .description {
+    line-height: 1.65;
+    max-width: 56ch;
   }
   .card-actions {
     display: flex;
@@ -299,7 +394,7 @@ function cover(title: string) {
 
   /* Featured project: full width, cover beside the details. */
   .featured {
-    grid-column: 1 / -1;
+    margin-bottom: 2rem;
   }
   .featured .project-card {
     display: grid;
@@ -307,7 +402,6 @@ function cover(title: string) {
     box-shadow: 10px 10px 0 var(--c-shadow);
   }
   .featured .project-card:hover {
-    transform: translate(-4px, -4px);
     box-shadow: 14px 14px 0 var(--c-shadow);
   }
   .featured .cover {
@@ -326,6 +420,13 @@ function cover(title: string) {
     padding: clamp(1.5rem, 4vw, 2.5rem);
     gap: 1.25rem;
   }
+  .featured h3 {
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+  }
+  .featured .description {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
   .featured-label {
     justify-self: start;
     padding: 0.3rem 0.7rem 0.2rem;
@@ -335,14 +436,133 @@ function cover(title: string) {
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
-  .featured h3 {
-    font-size: clamp(2.25rem, 5vw, 3.25rem);
+
+  /* Bento gallery: one page at a time, so the section never grows. */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
-  .description {
-    font-size: 1.0625rem;
-    line-height: 1.7;
-    max-width: 52ch;
+  .gallery.is-turning {
+    animation: page-in 380ms var(--ease-out);
   }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translate3d(var(--turn, 24px), 0, 0);
+    }
+  }
+  /* Small tiles: compact, the description waits in the dialog. */
+  .tile .description {
+    display: none;
+  }
+  .tile .project-body h3 {
+    font-size: 1.625rem;
+  }
+  .tile .cover {
+    aspect-ratio: 28 / 13;
+  }
+  /* Wide tiles: cover beside a short description. */
+  .tile.b-wide {
+    grid-column: span 2;
+  }
+  .tile.b-full {
+    grid-column: 1 / -1;
+  }
+  .tile.b-full .project-card {
+    grid-template-columns: minmax(0, 0.55fr) minmax(0, 1fr);
+  }
+  .tile.b-wide .cover svg {
+    max-height: 13rem;
+  }
+  .tile.b-wide .project-card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+  }
+  .tile.b-wide .cover {
+    aspect-ratio: auto;
+    min-height: 100%;
+    border-bottom: 0;
+    border-right: var(--border);
+  }
+  .tile.b-wide .description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.9375rem;
+    color: var(--c-ink-soft);
+  }
+  /* One orange tile per page breaks the rhythm. */
+  .tile.b-accent .project-card {
+    --c-ink: #0a0a0a;
+    --c-ink-soft: #0a0a0a;
+    --c-shadow: #0a0a0a;
+    background: var(--c-primary);
+    color: var(--c-on-primary);
+  }
+  .tile.b-accent .chip {
+    background: #0a0a0a;
+    color: #fafafa;
+    border-color: #0a0a0a;
+  }
+  .tile.b-accent .btn-secondary {
+    background: #0a0a0a;
+    color: #fafafa;
+    border-color: #0a0a0a;
+  }
+  .tile.b-accent .cover {
+    border-color: #0a0a0a;
+  }
+
+  /* Pager */
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .pager[hidden] {
+    display: none;
+  }
+  .pager-btn {
+    font-size: 1.25rem;
+  }
+  .pager-btn[disabled] {
+    opacity: 0.35;
+    cursor: default;
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+  .pager-mid {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+  }
+  .pager-count {
+    font: 600 1.5rem / 1 var(--font-display);
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+  }
+  .dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .dots :global(span) {
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 2px solid var(--c-ink);
+  }
+  .dots :global(span.is-current) {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+  }
+
   .empty {
     margin-top: 1rem;
     color: var(--c-ink-soft);
@@ -396,15 +616,39 @@ function cover(title: string) {
     gap: 1rem;
   }
 
+  @media (max-width: 1100px) {
+    .gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
   @media (max-width: 760px) {
-    .featured .project-card {
+    .featured .project-card,
+    .tile.b-wide .project-card {
       grid-template-columns: 1fr;
     }
-    .featured .cover {
+    .featured .cover,
+    .tile.b-wide .cover {
       aspect-ratio: auto;
       min-height: 0;
       border-right: 0;
       border-bottom: var(--border);
+    }
+    .tile.b-wide .cover {
+      aspect-ratio: 28 / 13;
+    }
+  }
+  @media (max-width: 640px) {
+    .gallery {
+      grid-template-columns: 1fr;
+    }
+    .tile.b-wide {
+      grid-column: span 1;
+    }
+    .pager-btn {
+      padding-inline: 0.75rem;
+    }
+    .pager-btn :global(span) {
+      display: none;
     }
   }
 </style>
@@ -424,22 +668,129 @@ function cover(title: string) {
   }
 
   const group = document.querySelector("[data-filters]");
-  const items = [...document.querySelectorAll<HTMLElement>("[data-gallery] > li")];
+  const featured = document.querySelector<HTMLElement>(".featured[data-item]");
+  const gallery = document.querySelector<HTMLElement>("[data-gallery]");
+  const tiles = [...document.querySelectorAll<HTMLElement>("[data-gallery] > [data-item]")];
   const empty = document.querySelector<HTMLElement>("[data-empty]");
+  const pager = document.querySelector<HTMLElement>("[data-pager]");
+  const prev = document.querySelector<HTMLButtonElement>("[data-prev]");
+  const next = document.querySelector<HTMLButtonElement>("[data-next]");
+  const count = document.querySelector<HTMLElement>("[data-count]");
+  const dots = document.querySelector<HTMLElement>("[data-dots]");
+
+  /**
+   * Bento layout for the tiles on a page, by columns and how many tiles there
+   * are, so rows always close: "w" wide (2 columns), "f" full row (also wide),
+   * "a" orange accent, "" small.
+   */
+  const LAYOUTS: Record<number, Record<number, string[]>> = {
+    // 4 columns (desktop, 6 per page)
+    6: {
+      1: ["f"],
+      2: ["w", "w"],
+      3: ["w", "a", ""],
+      4: ["w", "a", "", "f"],
+      5: ["w", "a", "", "w", "w"],
+      6: ["w", "", "a", "", "", "w"],
+    },
+    // 2 columns (tablet, 4 per page)
+    4: { 1: ["w"], 2: ["", "a"], 3: ["w", "", "a"], 4: ["w", "", "a", "w"] },
+    // 1 column (phone, 3 per page)
+    3: { 1: [""], 2: ["", "a"], 3: ["", "a", ""] },
+  };
+  const CLASSES: Record<string, string[]> = {
+    w: ["b-wide"],
+    f: ["b-wide", "b-full"],
+    a: ["b-accent"],
+    "": [],
+  };
+  const pageSize = () =>
+    matchMedia("(min-width: 1101px)").matches ? 6 : matchMedia("(min-width: 641px)").matches ? 4 : 3;
+
+  let tech = "*";
+  let page = 0;
+  const matches = (el: HTMLElement) =>
+    tech === "*" || (JSON.parse(el.dataset.techs ?? "[]") as string[]).includes(tech);
+
+  const render = (direction = 0) => {
+    const size = pageSize();
+    const visible = tiles.filter(matches);
+    const pages = Math.max(1, Math.ceil(visible.length / size));
+    page = Math.min(page, pages - 1);
+    const shown = new Set(visible.slice(page * size, page * size + size));
+
+    for (const tile of tiles) {
+      tile.hidden = !shown.has(tile);
+      tile.classList.remove("b-wide", "b-full", "b-accent");
+    }
+    const layout = LAYOUTS[size][shown.size] ?? [];
+    [...shown].forEach((tile, i) => {
+      tile.classList.add(...CLASSES[layout[i] ?? ""]);
+    });
+
+    const featuredShown = featured ? matches(featured) : false;
+    if (featured) featured.hidden = !featuredShown;
+    if (empty) empty.hidden = featuredShown || visible.length > 0;
+
+    if (pager && prev && next && count && dots) {
+      pager.hidden = pages < 2;
+      prev.disabled = page === 0;
+      next.disabled = page === pages - 1;
+      const pad = (n: number) => String(n).padStart(2, "0");
+      count.textContent = (count.dataset.template ?? "")
+        .replace("{page}", pad(page + 1))
+        .replace("{total}", pad(pages));
+      dots.replaceChildren(
+        ...Array.from({ length: pages }, (_, i) => {
+          const dot = document.createElement("span");
+          if (i === page) dot.className = "is-current";
+          // Copy Astro's scope attribute so the scoped styles apply.
+          const scope = [...dots.attributes].find((a) => a.name.startsWith("data-astro-cid"));
+          if (scope) dot.setAttribute(scope.name, "");
+          return dot;
+        }),
+      );
+    }
+
+    if (direction && gallery) {
+      gallery.style.setProperty("--turn", `${direction * 24}px`);
+      gallery.classList.remove("is-turning");
+      void gallery.offsetWidth;
+      gallery.classList.add("is-turning");
+    }
+  };
+
+  const go = (delta: number) => {
+    page += delta;
+    render(delta);
+    // If the gallery top scrolled out of view, bring it back.
+    if (gallery && gallery.getBoundingClientRect().top < 0) {
+      gallery.scrollIntoView({ block: "start" });
+    }
+  };
+  prev?.addEventListener("click", () => go(-1));
+  next?.addEventListener("click", () => go(1));
+
   group?.addEventListener("click", (e) => {
     const target = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
     if (!target) return;
     for (const b of group.querySelectorAll("[data-filter]")) {
       b.setAttribute("aria-pressed", String(b === target));
     }
-    const tech = target.dataset.filter;
-    let shown = 0;
-    for (const item of items) {
-      const techs: string[] = JSON.parse(item.dataset.techs ?? "[]");
-      const visible = tech === "*" || techs.includes(tech ?? "");
-      item.hidden = !visible;
-      if (visible) shown++;
-    }
-    if (empty) empty.hidden = shown > 0;
+    tech = target.dataset.filter ?? "*";
+    page = 0;
+    render();
   });
+
+  let lastSize = pageSize();
+  window.addEventListener("resize", () => {
+    const size = pageSize();
+    if (size !== lastSize) {
+      lastSize = size;
+      page = 0;
+      render();
+    }
+  });
+
+  render();
 </script>
